@@ -945,9 +945,9 @@ export function Readiness({ s }: { s: State }) {
     },
     {
       title: "Public judge access",
-      status: "Deployment and public repository pending",
+      status: "Source published; deployment pending",
       detail:
-        "Publish with HTTPS and persistent storage, then repeat the complete hosted walkthrough. Source, license, and Docker files are prepared.",
+        "Publish with HTTPS and persistent storage, then repeat the complete hosted walkthrough. Public source, license, and Docker files are available on GitHub.",
       ready: false,
     },
     {

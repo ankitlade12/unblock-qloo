@@ -4,7 +4,7 @@ Discover shared cultural interests. Turn explicit choices into feasible communit
 
 React + TypeScript frontend; FastAPI backend; SQLite persistence; server-side Qloo adapter; optional bounded language-model tools; deterministic planner with an independent feasibility checker.
 
-**Current release is an isolated synthetic demonstration, not a private pilot service.** All 12 participants, eight screenings, operational claims, quotes, and confirmations are fictional. No booking, payment, or external message is made. Credentials are not included in source. Live Qloo search and Insights were verified locally on October 27, 2026; the optional model remains unverified. Public hosting remains pending; source publication is tracked in the submission checklist.
+**Current release is an isolated synthetic demonstration, not a private pilot service.** All 12 participants, eight screenings, operational claims, quotes, and confirmations are fictional. No booking, payment, or external message is made. Credentials are not included in source. Live Qloo search and Insights were verified locally on October 27, 2026; the optional model remains unverified. Public hosting remains pending. [Public source is on GitHub](https://github.com/ankitlade12/unblock-qloo).
 
 ## Run locally
 
@@ -95,7 +95,7 @@ The demo deliberately lets its session owner act as every **fictional** particip
 
 `render.yaml` prepares a single Docker web service with a 1 GB persistent disk. This uses paid resources; no account, service, or charge has been created. Render documents disks as paid-service features: https://render.com/docs/disks. Blueprint reference: https://render.com/docs/blueprint-spec.
 
-1. Create a public source repository containing this project (exclude `.env`, `data`, caches, and dependencies using the supplied ignore files), then connect it to a Render account.
+1. Connect [the public repository](https://github.com/ankitlade12/unblock-qloo) to your Render account.
 2. Create a Blueprint from the repository. Review the quoted service and disk costs before applying. Set `APP_ORIGIN` to the exact assigned HTTPS origin; correct it and redeploy if the assigned hostname differs.
 3. Add `QLOO_API_KEY` as a secret only when issued. The unconfigured service supports the labeled synthetic workflow. Add model secrets only if using the optional assistant.
 4. Check build/start logs and `/api/health`. Verify the mounted `/app/data` is writable by container user 10001; a disk permission error must be resolved before accepting the deployment.

@@ -29,7 +29,7 @@ This ledger keeps unfinished items visible. “Implemented” means local functi
 - Two/three candidates where feasible: implemented. Objective is coverage, organizer cost, disruption, stable tie-break. Participant preference ranks are not collected, so no rank objective is invented.
 - Unknown essential access facts block applicable assignments. No constraints are silently softened.
 - Json import, evidence index, budget/window editor, audit log, consent, direct catalogue path: implemented. CSV import deferred to P1.
-- Public functional demo and public repository: not provisioned. Docker deployment artifacts, source, license, and setup instructions prepared.
+- Public source: https://github.com/ankitlade12/unblock-qloo. Public demo is pending Render authentication and provisioning; Docker deployment artifacts, license, and setup instructions are prepared.
 - Frozen-input synthetic discovery comparison: implemented with source validation, decision trail, independent plan checks, invalidation, and export. Live Qloo catalogue coverage and three scripted comparisons passed locally without measured improvement. Controlled causal comparison and organizer pilot remain pending real participants/organizer.
 - Browser/mobile/keyboard/automated accessibility: see verification report. Screen-reader assistive-technology testing and real-user access testing remain outstanding.
 - Provider-facing drafts: implemented and never sent. Bookings/payments/provider integrations remain explicit P2/non-goals.
@@ -60,7 +60,7 @@ Implemented a six-chapter interactive case study on the existing workspace, with
 | 4 | Title edit kept old Qloo identity | Fixed: clear mapping on title change, clear discovery on event edits, filter suggestions by event version |
 | 5 | Provider requests held global write lock | Fixed: compute/network outside transactions, read-only loads, optimistic conflict checks |
 | 6 | Cookie spoofing/reset bypassed limits | Fixed: client-address creation limits, authenticated mutation limits, persistent atomic deployment budgets |
-| 7 | No public repository/demo | Source committed locally with CI and secret exclusions; public GitHub publication requires explicit approval after automatic review rejection. Hosting blocked by unauthenticated host accounts |
+| 7 | No public repository/demo | Public source published to ankitlade12/unblock-qloo with explicit approval and passing credential scan. Hosting awaits Render authentication and provisioning |
 | 8 | Recommendation value unmeasured / half catalogue unavailable | Eight synthetic offers now cover all screenings; three live comparisons completed and honestly show no improvement. Real utility remains unproven |
 | 9 | Duplicate screenings collapsed | Fixed: one Qloo entity maps to every non-cancelled reviewed screening |
 | 10 | No fresh-visitor live setup | Fixed: visible mapping → consent/favorites → discovery flow, prerequisite checks and explicit empty states |
