@@ -18,3 +18,9 @@ test-results/
 .agents/
 .codex/
 AGENTS.md
+
+# Keep the public documentation small; local submission/QA material stays private.
+/docs/**
+!/docs/architecture.md
+!/docs/data-provenance.md
+/UNBLOCK_Product_Requirements_and_Technical_Design.md

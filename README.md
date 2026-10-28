@@ -1,22 +1,26 @@
 # UNBLOCK
 
-Discover shared cultural interests. Turn explicit choices into feasible community outings.
+Turn cultural interests into community outings people can actually join.
 
-React + TypeScript frontend; FastAPI backend; SQLite persistence; server-side Qloo adapter; optional bounded language-model tools; deterministic planner with an independent feasibility checker.
+[Live demo](https://unblock-demo.onrender.com) · [Architecture](docs/architecture.md) · [Data provenance](docs/data-provenance.md) · [MIT license](LICENSE)
 
-**Current release is an isolated synthetic demonstration, not a private pilot service.** All 12 participants, eight screenings, operational claims, quotes, and confirmations are fictional. No booking, payment, or external message is made. Credentials are not included in source. Live Qloo search and Insights were verified locally on October 27, 2026; the optional model remains unverified. [Open the public demo](https://unblock-demo.onrender.com) · [Public source](https://github.com/ankitlade12/unblock-qloo). Hosted browser, live Qloo, secure-cookie, and persistence checks passed.
+UNBLOCK helps community activity coordinators connect individual choices with transport, accessibility, companion seats, timing, shared inventory, and a budget. Qloo supplies cultural recommendations; explicit participant responses determine what the planner may consider.
 
-## Product and judging walkthrough
+**This is a synthetic demonstration.** Participants, screenings, transport, commitments, and simulated outcomes are fictional. Qloo discovery is live when configured. No real booking, payment, provider message, organizer pilot, or attendance benefit is claimed. Workspaces expire after 24 hours; do not enter private participant records.
 
-Start with the [three-minute demo script](docs/demo-script.md). The proposed first user is a community activity coordinator balancing preferences, access needs, transport, and a shared outing budget. The Overview explains that job and links the problem evidence.
+## Try the product
 
-In **Compare discovery**, **Follow each choice into the plan** connects retained Qloo evidence and approved favorites to the explicit response, individual offer checks, and actual group-plan outcome. Accepted options are not automatically selected. The export retains the same decision path.
+1. Choose **Explore the demo**, then **Walk through the story** for the six-chapter organizer journey.
+2. In **Discover**, select Alex, explicitly consent to a reviewed fictional profile, load it, and run Qloo discovery. Profile loading spends no provider request; discovery uses one Insights request.
+3. In **Compare discovery**, freeze current choices, select Qloo-backed suggestions, record a fictional response, and compare checked plans. **Follow each choice into the plan** connects its source, explicit response, individual checks, and actual assignment outcome. Export retains the same evidence.
+4. Generate a current proposal in **Plans**. Organizer approval, participant commitments, and resource confirmations are separate gates before final itinerary export.
+5. In the story, make a used shuttle unavailable and inspect the repaired assignments and cost. Prior approvals cannot silently carry over.
 
-[Copy-paste Devpost story](docs/devpost-story.md) · [Audience and proposed pilot](docs/impact-and-pilot.md) · [Judging evidence map](docs/judging-evidence.md)
+A compatible new choice may remain unselected. An unchanged comparison is reported honestly. A $0 budget demonstrates the no-plan state. Post-event review is explicitly simulated and does not change real time or planning validity.
 
 ## Run locally
 
-Prerequisites: Python 3.14 and Node 22.12+ (tested on Python 3.14 / Node 25).
+Requirements: Python 3.14 and Node 22.12+.
 
 ```sh
 python3 -m venv .venv
@@ -26,58 +30,53 @@ cp .env.example .env
 ./run.sh
 ```
 
-Open **http://127.0.0.1:8011**. No API key is needed for the synthetic workflow. `run.sh` loads the local `.env`, builds the frontend, and serves both UI and API. Treat `.env` as trusted shell configuration; never paste untrusted content into it. For frontend hot reload, run the API on port 8000 and `npm run dev --prefix apps/web` in another terminal.
+Open http://127.0.0.1:8011. No key is required for the synthetic planning workflow. `run.sh` loads `.env` as trusted shell configuration, builds the frontend, and serves UI and API together. Keep credentials out of source control.
 
-## Walkthrough
+## Configuration
 
-Start with **Walk through the story** on Overview (or **The story** in the sidebar). Six chapters introduce the people, capture choices, run actual planning checks, explain commitments, simulate a used-shuttle cancellation, and show the evidence and remaining work. Chapters reflect the current workspace; they never auto-approve or invent a successful result. The plan detail now includes the full day, assigned participants/companions, capacity, and itemized cost from its immutable snapshot.
+See [.env.example](.env.example) for defaults.
 
-1. Open **Explore the demo**. Every browser context gets its own private, 24-hour synthetic workspace.
-2. In **Discover**, choose a fictional participant and mark an experience interested, maybe, or not for me. Seeded interests are synthetic, explicit test inputs.
-3. In **Participants**, edit availability, maximum contribution, functional needs, companion requirements, or a mandatory service policy.
-4. **Generate plans**. Compare up to three independently checked assignments, costs, and unserved people. No interest is inferred from affinity.
-5. Review and approve an exact proposal version. Record each fictional participant's commitment to that itinerary.
-6. Record synthetic provider evidence covering the exact number of seats **and** tickets. Once all conditions hold, download the final calendar itinerary.
-7. Mark a used transport resource unavailable. Earlier versions require review. Replan, inspect the diff, and renew approval/commitments.
-8. Review **Evidence**, download evidence JSON or an unsent provider-request draft, and optionally record synthetic attendance.
+| Variable | Purpose |
+|---|---|
+| `QLOO_API_KEY` | Enables server-side cultural discovery |
+| `QLOO_API_ORIGIN` | Defaults to the hackathon API; use an origin matching the issued credential |
+| `QLOO_CALL_BUDGET` / `QLOO_DAILY_CALL_BUDGET` | Persistent workspace/deployment attempt limits; failures count |
+| `DATABASE_PATH` | SQLite file; use persistent storage when hosted |
+| `APP_ORIGIN` | Exact browser origin for same-origin checks |
+| `COOKIE_SECURE` | Set `true` behind HTTPS; `false` for local HTTP |
+| `MODEL_API_KEY` / `MODEL_NAME` | Optional Responses-compatible assistant; disabled in the public deployment |
 
-A budget of zero demonstrates an honest infeasible result. `Maybe`, rejected, unseen, withdrawn, and stale-interest choices cannot support actionable assignments.
+Qloo uses `/search` for explicit identity review and `/v2/insights` for selected cultural entity IDs. The reviewed demo catalogue avoids repeated identity searches. Cached results are labeled as recorded evidence. Missing matches never become invented affinity scores. Functional requirements are not sent to Qloo.
 
-## Compare discovery
+The optional model can inspect context, list missing requirements, request consented discovery, and generate checked drafts. It cannot change choices, approve, commit, confirm, book, pay, or send. The normal planning workflow is deterministic and works without a model.
 
-Open **Compare discovery** (also linked from chapter two). Freeze the current choices, select a fictional participant, record an explicit response to a catalogue item, then compare checked plans. Both searches use the frozen resources, budget, requirements, and evaluation time. An unchanged result is reported honestly; missing plans are not treated as zero-cost wins. Changing resources or interests outside this flow requires a new baseline.
-
-Direct catalogue decisions work without credentials and carry no Qloo claim. To record Qloo-backed decisions, first resolve favorites, review catalogue identities, and run consented discovery. The server checks the returned entity, event version, and current favorite IDs against retained provider evidence. Export includes frozen planning inputs, decision provenance, checked results, and limitations, excluding raw provider responses. Comparisons are historical; create a current proposal separately for approval.
-
-## Enable real cultural discovery
-
-Set `QLOO_API_KEY` in the server environment and restart. Default origin is `https://hackathon.api.qloo.com`; use `https://api.qloo.com` only if that matches the issued credential. Both are allowlisted. The code uses `/search` and `/v2/insights` with `filter.type=urn:entity:movie` and approved `signal.interests.entities`.
-
-1. In **Catalogue**, review each film's Qloo identity. Select a returned result; no title is auto-resolved.
-2. In **Discover**, opt in, search a favorite, and select the correct entity.
-3. Click **Discover with Qloo**. Recommendations are intersected with mapped catalogue entities. Missing entities get no invented affinity. Returned recommendation rank and evidence IDs are retained.
-4. Mapping changes increment event versions, so participants must renew interest.
-
-Live cultural evidence does **not** make the fictional operations real. Provider responses are stored privately in the database, excluded from JSON exports and the repository. Repeated requests return explicitly labeled recorded evidence scoped to the workspace. Default budgets: 40 actual Qloo attempts per workspace and 200 per deployment per UTC day, including failed calls. Reservations and rate limits persist in SQLite across restarts; creating another workspace does not reset the deployment cap. No automatic adapter retries.
-
-Initial live smoke check passed on October 27, 2026: four movie searches and one Insights request through the application. Inside Out (2015) produced matches for Coco and Spirited Away among three reviewed catalogue mappings. The browser displayed the evidence and exported an explicit synthetic Qloo-backed choice. This small check does not establish broad coverage or causal benefit; warnings, quotas, and hosted behavior still need deployment-specific checks.
-
-## Optional language-model assistant
-
-Set `MODEL_API_KEY` and an explicitly selected Responses-compatible `MODEL_NAME`. The adapter defaults to `https://api.openai.com/v1/responses`; no model is silently selected. The **Plans** screen then enables the assistant.
-
-The model can read context, list missing requirements, ask for Qloo discovery for a consented profile, and generate checked drafts. It cannot edit inputs, approve, commit, confirm, book, pay, or send. The server validates tool names and arguments, limits calls to eight per task and 24 model requests per workspace, and displays tool actions. Model prose is labeled as generated and is never used to authorize a state transition. Repeated solve calls in one task reuse the result. Without model credentials, the deterministic workflow remains available and is labeled accurately.
-
-## Validation
+## Verify
 
 ```sh
 .venv/bin/python -m pytest -q
 npm run build --prefix apps/web
-# Run the built API/UI on port 8011 first:
+cd apps/web
+npx playwright install chromium
+cd ../..
+# Start the application first, then run browser journeys:
 npm run test:e2e --prefix apps/web
 ```
 
-Install the Playwright Chromium browser if needed with `cd apps/web && npx playwright install chromium`. Alternatively set `CHROMIUM_PATH` to an installed Chromium executable. Tests cover the actual UI/API/database journey, mobile layouts, keyboard navigation, automated accessibility scanning, isolation, stale versions, idempotency, independent solver verification, small exhaustive-oracle cases, and mocked provider/tool boundaries. Current results: 48 backend tests and six browser scenarios passed. See [verification](docs/verification.md) for the actual run results and limits.
+Set `PLAYWRIGHT_BASE_URL` to test another origin, or `CHROMIUM_PATH` to use an installed Chromium. Repeated full browser suites can hit the one-minute workspace-creation limit; use a fresh isolated database locally or wait for the window to expire.
+
+Latest verified release: **55 backend tests, six browser journeys, and ten expanded live scenario groups passed**. Coverage includes constraints, exact-version decisions, isolation, stale writes, import validation, exports, consent withdrawal, disruption/repair, mobile layout, and automated accessibility. The backend test run emits a Starlette test-transport deprecation warning. Automated Chromium/axe checks are not human accessibility certification, cross-browser verification, or load testing.
+
+Optional live checks spend provider requests and create synthetic workspaces:
+
+```sh
+# Three profiles; three live Qloo calls and scripted choices.
+.venv/bin/python scripts/verify_judge.py --allow-live --base-url https://unblock-demo.onrender.com
+
+# Expanded browser check; one Qloo call, screenshots, and export assertions.
+QA_BASE_URL=https://unblock-demo.onrender.com node scripts/browser_qa.cjs --allow-live
+```
+
+Reports default to ignored `data/`. GitHub Actions verifies the offline backend, frontend build, and browser journeys. A separate judging-health workflow checks availability and remaining application allowance without calling Qloo.
 
 ## Deploy
 
@@ -85,64 +84,18 @@ Install the Playwright Chromium browser if needed with `cd apps/web && npx playw
 docker compose up --build
 ```
 
-Local Docker URL: http://localhost:8011. The Docker image has been built and executed successfully on Render. The local Docker daemon remains unavailable.
+Local Docker URL: http://localhost:8011. [render.yaml](render.yaml) provides an optional paid deployment configuration. Review hosting costs before provisioning.
 
-For a public demo, deploy the Dockerfile on a container host with **one application process and a persistent disk at `/app/data`**. Set `APP_ORIGIN` to the exact HTTPS origin and `COOKIE_SECURE=true`. Set provider keys as host secrets. Keep TLS termination enabled. Health check: `/api/health`. Do not use ephemeral serverless storage for SQLite or horizontally scale this prototype. Use the published public URL in Playwright and run the journey there before claiming hosted readiness.
+Run one application process with persistent SQLite storage at `/app/data`. Set `APP_ORIGIN` to the exact public HTTPS URL, `COOKIE_SECURE=true`, and provider keys through host secrets. The disk must be writable by container user 10001. Health endpoint: `/api/health`. Do not horizontally scale this SQLite prototype or place its database on ephemeral storage.
 
-**Public deployment:** https://unblock-demo.onrender.com. Render runs one Starter Docker service in Ohio with a 1 GB persistent disk at `/app/data`. The user approved a $7.25/month base cost, before taxes or usage overages. Secrets are configured privately. Automatic deploys are disabled; deploy reviewed commits after CI passes.
+The public Render service uses a single instance and persistent disk. Automatic deployment is disabled; deploy reviewed commits after CI passes. Verify fresh-browser isolation, cookies, exports, provider access, and saved-state persistence after hosting changes.
 
 ## Scope and limits
 
-See [PRD coverage](docs/requirements-coverage.md). P0 application workflows are implemented; local and hosted Qloo checks and hosted acceptance passed. Selected P1 capabilities (withdrawal, provider evidence, explicit outcomes) are included. Private organizer accounts, expiring invitations, participant-level authorization for real records, PostgreSQL, multiple planning windows, CSV imports, production job streaming, and real provider integrations are not implemented. These must precede a real pilot. No organizer interview, controlled recommendation experiment, cost savings, or real attendance improvement is claimed.
+The session owner acts as every fictional participant. Real organizer accounts, participant invitations, participant-level authorization, verified operational providers, and production data-management controls are not implemented. These are prerequisites for a real pilot.
 
-The demo deliberately lets its session owner act as every **fictional** participant. It must not be used to host real people. Backend limits include 12 events, eight offers, 30 proposals per workspace, and a three-second search budget. Search results report whether exhaustive enumeration finished. Provider/model calls run outside database transactions. Short optimistic commits reject concurrent workspace edits with HTTP 409 rather than overwriting them; production use still needs durable jobs and a production database.
+Planning is bounded to 12 events, eight offers, and a three-second search budget. Candidates must pass independent aggregate checks. A timeout never establishes optimality. Individual offer eligibility does not establish group capacity or affordability; the full planner checks those separately.
 
-[Architecture](docs/architecture.md) · [Data provenance](docs/data-provenance.md) · [Judge guide](docs/judge-guide.md) · [Submission checklist](docs/submission.md) · [MIT license](LICENSE)
+Comparisons retain original choices, constraints, and a shared evaluation time. Only explicit recorded responses differ. The authored baseline already serves 12 fictional people for $224; new Qloo options do not guarantee coverage or cost improvements. In the demonstrated shuttle disruption, a repair retained coverage at $246 with six changed assignments. These are scenario results, not observed impact.
 
-## Render deployment
-
-`render.yaml` describes the deployed single Docker web service with a 1 GB persistent disk. These paid resources were provisioned with explicit user approval. Render documents disks as paid-service features: https://render.com/docs/disks. Blueprint reference: https://render.com/docs/blueprint-spec.
-
-1. Connect [the public repository](https://github.com/ankitlade12/unblock-qloo) to your Render account.
-2. Create a Blueprint from the repository. Review the quoted service and disk costs before applying. Set `APP_ORIGIN` to the exact assigned HTTPS origin; correct it and redeploy if the assigned hostname differs.
-3. Add `QLOO_API_KEY` as a secret only when issued. The unconfigured service supports the labeled synthetic workflow. Add model secrets only if using the optional assistant.
-4. Check build/start logs and `/api/health`. Verify the mounted `/app/data` is writable by container user 10001; a disk permission error must be resolved before accepting the deployment.
-5. Run the browser journey on the public origin and verify a saved workspace survives a service restart. Test cookies, downloads, fresh-browser isolation, and live Qloo separately. The blueprint passed Render validation. The actual service and disk were provisioned through CLI/API; the hosted acceptance checks below passed.
-
-The visual walkthrough now opens with an illustrated community scene, an inspectable taste-to-choice path, participant groups by outing, and affected-person chips during a shuttle disruption. Illustrations do not imply live bookings or measured outcomes.
-
-## Audit remediation and live evaluation
-
-The October 27 audit fixes and remaining external work are tracked in [requirements coverage](docs/requirements-coverage.md#audit-remediation). New demo workspaces now have transport offers for all eight screenings; existing workspaces retain their saved inputs. Start a new demo to use the expanded fixture. The original baseline remains 12 served for $224.
-
-Discover includes a three-step setup: review catalogue mappings, explicitly consent and select favorites, then run discovery. It distinguishes no request, no catalogue matches, and retained results. Changing a film title clears its old entity mapping; all event edits invalidate stale suggestions.
-
-An opt-in repeatable live check mapped all eight screenings, tested three favorite profiles, and verified exported Qloo provenance using 14 provider attempts. It returned 3, 1, and 1 catalogue matches. All three comparisons remained 12 served, with zero cost change and zero assignment changes. Scripted acceptance is not observed human acceptance or evidence of causal benefit.
-
-```sh
-# Uses a new synthetic workspace and spends up to 14 Qloo attempts.
-.venv/bin/python scripts/verify_live.py --allow-live
-```
-
-The aggregate report is saved under ignored `data/`. Run offline browser checks against an isolated server/database with empty provider keys; set `PLAYWRIGHT_BASE_URL` to its origin. Test expectations also adapt to configured Qloo readiness, without making paid/provider requests. GitHub Actions runs the offline build, backend tests, and browser journey.
-
-## Hosted verification
-
-All six browser journeys pass against the public HTTPS origin, including mobile layouts, keyboard/axe checks, commitments, confirmations, downloads, disruption/repair, comparisons, and isolated browser sessions. A deliberately delayed initial session response exposed a welcome-screen race; it is fixed and included in the first browser regression. GitHub Actions passes all 48 backend tests and six browser journeys on that fix.
-
-The hosted opt-in Qloo evaluation mapped eight screenings and tested three profiles using 14 provider attempts. It returned 3/1/1 catalogue matches, with no planning improvement. Secure, HttpOnly, SameSite cookies were checked. A saved synthetic workspace survived the subsequent release restart with identical state, confirming persistent-disk behavior. The optional model remains unconfigured and unverified live.
-
-## Fast judge walkthrough
-
-Discover now offers three reviewed fictional profiles. Select a favorite, explicitly consent, load the profile, and run Qloo discovery. Eight catalogue identities come from reviewed search results in `services/api/reviewed_catalogue.json`; they are not generated recommendations. Profile loading makes no external request and preserves original interests. Each profile needs one live Insights call rather than repeated catalogue searches.
-
-The result shows newly surfaced options and individual access/timing compatibility. Only explicit choices enter planning. Comparison exports count distinct newly accepted Qloo-backed choices using the final response, separately from coverage and cost. Discovery, favorites, and consent metadata no longer invalidate approved plans; operational edits and explicit interest changes still do.
-
-After confirming a proposal, **Simulate post-event review** enables fictional attendance within the 24-hour workspace. The simulation affects outcome entry only. Real time, planning validity, and booking status do not change, and every simulated outcome carries its timestamp in the export.
-
-```sh
-# Three live calls, one per reviewed profile; choices are explicitly scripted.
-.venv/bin/python scripts/verify_judge.py --allow-live --base-url https://unblock-demo.onrender.com
-```
-
-The app shows its shared remaining daily allowance. `Judging availability` checks HTTPS, storage, configuration, and remaining application budget hourly until November 7 UTC, without making provider calls; it cannot guarantee the provider’s upstream quota. Service deletion remains a separate action after judging/finalist follow-up. See [submission package](docs/submission.md) for paste-ready entry text and judge instructions.
+The proposed next validation step is a counterbalanced organizer study using matched fictional tasks, measuring total planning/repair effort, missed requirements, and facilitator intervention. No such pilot has been conducted. See [data provenance](docs/data-provenance.md) for evidence and privacy boundaries.
