@@ -218,6 +218,9 @@ test("mobile navigation, all screens and no horizontal overflow", async ({
       ),
     ).toBeTruthy();
   }
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  const populatedEvidence = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  expect(populatedEvidence.violations).toEqual([]);
   await page.getByRole("button", { name: "Toggle navigation" }).click();
   await page.getByRole("button", { name: "Overview", exact: true }).click();
   await page.screenshot({

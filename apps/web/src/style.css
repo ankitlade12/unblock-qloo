@@ -4316,6 +4316,7 @@ main summary:focus-visible {
 }
 
 .audit-row > span {
+  color: #64715e;
   min-width: 0;
   white-space: normal;
   overflow-wrap: anywhere;
