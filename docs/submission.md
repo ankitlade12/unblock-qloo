@@ -22,3 +22,5 @@ Before publishing, adjust the description to match the live deployment and actua
 - [ ] Submission entered on Devpost
 
 The challenge page was checked October 27, 2026: deadline October 30 at 11:45 p.m. Eastern / 10:45 p.m. Chicago; functional public application, public code, project description, and visible open-source license required. Verify updates before submitting: https://qloo.devpost.com/ . No submission or external outreach has been performed.
+
+Publication status: 49 source, test, and documentation files are committed locally. Credential scan passed. Automatic approval review blocked public publication to `ankitlade12/unblock-qloo` pending explicit user approval of the source payload and destination. The GitHub Actions workflow is prepared but has not run remotely. Render and Railway authentication are unavailable; no public deployment has been created.
