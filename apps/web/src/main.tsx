@@ -109,13 +109,20 @@ function App() {
     [modal, setModal] = useState<React.ReactNode>(null);
   const announce = useRef<HTMLDivElement>(null);
   const personalization = useRef<HTMLDetailsElement>(null);
+  const sessionStarted = useRef(false);
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [page]);
   useEffect(() => {
+    let active = true;
     api("/state")
-      .then(setS)
-      .catch(() => setWelcome(true));
+      .then((value) => {
+        if (active && !sessionStarted.current) setS(value);
+      })
+      .catch(() => {
+        if (active && !sessionStarted.current) setWelcome(true);
+      });
+    return () => { active = false; };
   }, []);
   useEffect(() => {
     if (!s || busy) return;
@@ -137,6 +144,7 @@ function App() {
     };
   }, [busy, !!s]);
   async function start() {
+    sessionStarted.current = true;
     setBusy(true);
     setError("");
     try {

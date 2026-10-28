@@ -5,6 +5,11 @@ test("organizer and participant journey, confirmation, disruption and isolation"
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  let releaseInitial!: () => void;
+  await page.route("**/api/state", async (route) => {
+    await new Promise<void>((resolve) => { releaseInitial = resolve; });
+    await route.fulfill({ status: 401, contentType: "application/json", body: '{"detail":"Start a demo workspace first"}' });
+  }, { times: 1 });
   await page.goto("/");
   await page
     .getByRole("button", { name: "Explore the demo", exact: true })
@@ -14,6 +19,10 @@ test("organizer and participant journey, confirmation, disruption and isolation"
       name: /Different tastes.*One afternoon.*A way together/,
     }),
   ).toBeVisible();
+  await expect.poll(() => Boolean(releaseInitial)).toBe(true);
+  const lateInitial = page.waitForResponse((response) => response.url().endsWith("/api/state") && response.status() === 401);
+  releaseInitial();
+  await lateInitial;
   await page.screenshot({
     path: "test-results/overview-desktop.png",
     fullPage: true,

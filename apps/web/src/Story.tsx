@@ -945,10 +945,10 @@ export function Readiness({ s }: { s: State }) {
     },
     {
       title: "Public judge access",
-      status: "Source published; deployment pending",
+      status: "Public demo and source available",
       detail:
-        "Publish with HTTPS and persistent storage, then repeat the complete hosted walkthrough. Public source, license, and Docker files are available on GitHub.",
-      ready: false,
+        "The demo is hosted at unblock-demo.onrender.com with HTTPS and persistent storage. Public source, license, and verification details are on GitHub.",
+      ready: true,
     },
     {
       title: "Private pilot",
