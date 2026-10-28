@@ -64,3 +64,13 @@ All participants, operations, confirmations, and outcomes are synthetic. No book
 - [ ] Devpost entry submitted and confirmation captured
 
 Deadline: October 30, 2026, 10:45 p.m. America/Chicago. Judging ends November 5, 2026, 10:45 p.m. America/Chicago; keep the demo available through judging and any finalist follow-up. Official rules: https://qloo.devpost.com/rules . Videos are not required. Cleanup is not scheduled automatically.
+
+## Submission screenshots
+
+Captured from the public application on October 28, 2026, using a fictional profile and a live Qloo response:
+
+- [Live discovery and newly surfaced options](screenshots/live-discovery.png)
+- [Mobile discovery](screenshots/live-discovery-mobile.png)
+- [Qloo-backed choice and unchanged planning comparison](screenshots/qloo-comparison.png)
+
+The screenshots contain synthetic preferences and explicit demo choices, not measured human acceptance. Provider results and remaining allowance can change on later runs.
