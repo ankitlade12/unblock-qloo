@@ -1,0 +1,23 @@
+# Optional paid deployment. Review Render's quoted price before provisioning.
+# One instance preserves the application's single-process SQLite assumptions.
+services:
+  - type: web
+    name: unblock-demo
+    runtime: docker
+    plan: starter
+    numInstances: 1
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: APP_ORIGIN
+        sync: false
+      - key: DATABASE_PATH
+        value: /app/data/unblock.db
+      - key: QLOO_API_ORIGIN
+        value: https://hackathon.api.qloo.com
+    disk:
+      name: unblock-data
+      mountPath: /app/data
+      sizeGB: 1
