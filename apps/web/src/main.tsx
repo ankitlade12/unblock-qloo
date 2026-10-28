@@ -500,6 +500,68 @@ function App() {
           {page === "Overview" && (
             <>
               <StoryOpening s={s} start={() => go("The story")} />
+              <section className="panel spaced audience-case">
+                <span className="eyebrow">
+                  BUILT FOR COMMUNITY OUTING ORGANIZERS
+                </span>
+                <h2>An invitation is only useful when someone can join.</h2>
+                <p>
+                  For a community centre planning a cultural afternoon, a good
+                  recommendation is one part of the job. Someone still needs to
+                  reconcile individual choices, companion seats, access needs,
+                  transport, and a shared budget.
+                </p>
+                <div className="audience-steps">
+                  <div>
+                    <strong>Discover something worth choosing</strong>
+                    <p>
+                      Qloo connects cultural favorites to reviewed films. Each
+                      person decides what interests them.
+                    </p>
+                  </div>
+                  <div>
+                    <strong>Check whether it works together</strong>
+                    <p>
+                      The planner checks shared resources and preserves every
+                      participant’s requirements.
+                    </p>
+                  </div>
+                  <div>
+                    <strong>Keep the plan usable when things change</strong>
+                    <p>
+                      Inspect changed assignments, renew approval, and retain
+                      the decision trail.
+                    </p>
+                  </div>
+                </div>
+                <details>
+                  <summary>
+                    The problem evidence and our next validation step
+                  </summary>
+                  <p>
+                    A University of Minnesota report for the National Center for
+                    Mobility Management identifies accessibility, affordability,
+                    service flexibility, and fragmented transport services as
+                    barriers to older adults’ social participation. This informs
+                    our proposed audience; it does not validate UNBLOCK.
+                  </p>
+                  <a
+                    href="https://www.ccam-tac.org/wp-content/uploads/2020/06/FINAL_FULL_SOCIAL-ISOLATION-RESEARCH-PAPER.pdf"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Read the transport and social participation research (2020,
+                    PDF)
+                  </a>
+                  <p>
+                    Next: test the same outing with community organizers using
+                    their current process and UNBLOCK, measuring planning time,
+                    missed constraints, and repair effort. No organizer pilot or
+                    real attendance benefit has been measured yet. This
+                    workspace contains fictional data only.
+                  </p>
+                </details>
+              </section>
               <div className="stats-grid">
                 <Stat
                   label="People in your community"

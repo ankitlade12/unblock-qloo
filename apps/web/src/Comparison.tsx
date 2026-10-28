@@ -308,10 +308,119 @@ export function DiscoveryComparison({
                 {results.discovery_contribution && (
                   <div className="discovery-contribution">
                     <span className="eyebrow">DISCOVERY CONTRIBUTION</span>
-                    <h3>{results.discovery_contribution.newly_accepted_qloo_choices} new Qloo-backed interested choices</h3>
-                    <p>From {results.discovery_contribution.qloo_choices_reviewed} distinct Qloo-backed choices reviewed in this comparison. {results.discovery_contribution.newly_accepted_event_ids.map((id) => c.baseline_summary?.events[id] || id).join(", ")}</p>
-                    <p className="small-note">{results.discovery_contribution.limitation} Planning results below are measured separately.</p>
+                    <h3>
+                      {
+                        results.discovery_contribution
+                          .newly_accepted_qloo_choices
+                      }{" "}
+                      new Qloo-backed interested choices
+                    </h3>
+                    <p>
+                      From{" "}
+                      {results.discovery_contribution.qloo_choices_reviewed}{" "}
+                      distinct Qloo-backed choices reviewed in this comparison.{" "}
+                      {results.discovery_contribution.newly_accepted_event_ids
+                        .map((id) => c.baseline_summary?.events[id] || id)
+                        .join(", ")}
+                    </p>
+                    <p className="small-note">
+                      {results.discovery_contribution.limitation} Planning
+                      results below are measured separately.
+                    </p>
                   </div>
+                )}
+                {!!results.decision_paths?.length && (
+                  <section
+                    className="choice-paths"
+                    aria-label="Discovery to planning evidence"
+                  >
+                    <span className="eyebrow">
+                      FROM TASTE TO A CHECKED DECISION
+                    </span>
+                    <h3>Follow each choice into the plan.</h3>
+                    <p>
+                      Individual checks cover access, timing, consented
+                      interest, and available transport. The group planner
+                      separately checks shared capacity, minimum group sizes,
+                      and the total budget.
+                    </p>
+                    {results.decision_paths.map((path) => (
+                      <article
+                        className="choice-path"
+                        key={`${path.participant_id}:${path.event_id}`}
+                      >
+                        <h4>
+                          {c.baseline_summary?.people[path.participant_id]} ·{" "}
+                          {c.baseline_summary?.events[path.event_id]}
+                        </h4>
+                        <ol>
+                          <li>
+                            <strong>Discovery</strong>
+                            <span>
+                              {path.source === "qloo"
+                                ? `Qloo connected ${path.evidence?.approved_favorites.map((f) => f.name).join(", ")} to this screening.`
+                                : "Explored directly in the catalogue; no Qloo attribution."}
+                            </span>
+                          </li>
+                          <li>
+                            <strong>Explicit choice</strong>
+                            <span>
+                              {path.baseline_response} → {path.response}.
+                              Recorded for this fictional participant.
+                            </span>
+                          </li>
+                          <li>
+                            <strong>Practical checks</strong>
+                            <span>
+                              {path.eligible_offer_ids.length} transport options
+                              pass individual checks.
+                            </span>
+                          </li>
+                          <li>
+                            <strong>Planning result</strong>
+                            <span>
+                              {
+                                {
+                                  not_accepted:
+                                    "Not eligible for assignment: the participant has not accepted this choice.",
+                                  blocked:
+                                    "Not eligible for assignment: no transport option passes the individual checks.",
+                                  no_checked_plan:
+                                    "Individual checks pass, but no checked group plan was found. Participation is not established.",
+                                  selected:
+                                    "This screening appears in the checked comparison plan. Approval, commitments, and provider confirmation are still required.",
+                                  available_not_selected:
+                                    "Kept as an accepted option, but not selected in this comparison plan. The planner prioritizes coverage, then cost, then a stable tie-break; it does not force a Qloo match into the outing.",
+                                }[path.outcome]
+                              }
+                            </span>
+                          </li>
+                        </ol>
+                        <details>
+                          <summary>Inspect checks and source evidence</summary>
+                          {path.individual_offer_checks.length === 0 && (
+                            <p>No transport offer exists for this screening.</p>
+                          )}
+                          {path.individual_offer_checks.map((check) => (
+                            <p key={check.offer_id}>
+                              <strong>{check.offer_id}</strong>:{" "}
+                              {check.blockers.length
+                                ? check.blockers.join("; ")
+                                : "Individual checks pass; group capacity and budget checked separately."}
+                            </p>
+                          ))}
+                          {path.evidence && (
+                            <p>
+                              Qloo evidence {path.evidence.id} ·{" "}
+                              {path.evidence.mode} ·{" "}
+                              {when(path.evidence.retrieved_at)} CT. Included in
+                              the comparison export.
+                            </p>
+                          )}
+                        </details>
+                      </article>
+                    ))}
+                  </section>
                 )}
                 <div className="comparison-results">
                   <ResultCard

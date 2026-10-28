@@ -20,3 +20,10 @@ The **Compare discovery** flow freezes existing choices without weakening them. 
 Each decision records its prior response, new response, event version, timestamp, and discovery source. A Qloo source requires consent and retained Insights evidence matching the current approved favorites and mapped event. Direct catalogue responses remain available without credentials. The export retains frozen planning inputs and provenance, but excludes raw provider responses. Historical results never become approved plans automatically.
 
 This is a paired synthetic scenario, not the randomized experiment above. The baseline already serves all 12 fictional people, so unchanged coverage is expected in many explorations. New choices may change cost or assignments; neither improvement nor real participant acceptance is promised. Mixed-source changes cannot be attributed solely to Qloo.
+
+
+## Decision-path interpretation
+
+Each latest participant/event decision has an exported path tied to the frozen evaluation clock: source evidence, baseline and latest response, individual offer blockers, individually eligible offer IDs, actual assigned offer, and outcome. Individual eligibility does not prove aggregate feasibility: minimum groups, shared inventory, conflicting vehicles, and the overall budget are checked by the solver and independent verifier. A compatible new option may remain unselected; a missing group plan never becomes a numerical success. Repeated responses produce one current path while the original decision history remains retained.
+
+The proposed real-organizer protocol is in [impact-and-pilot.md](impact-and-pilot.md); it has not been conducted.

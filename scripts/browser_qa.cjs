@@ -63,7 +63,9 @@ fs.mkdirSync(out, { recursive: true });
     await nav(name);
   };
   await page.goto(origin);
-  await expect(page.getByRole("button", { name: "Explore the demo", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Explore the demo", exact: true }),
+  ).toBeVisible();
   await snap("01-welcome");
   let r = await context.request.post(origin + "/api/demo", {
     headers: { "X-Unblock-Request": "1" },
@@ -112,13 +114,11 @@ fs.mkdirSync(out, { recursive: true });
     .poll(async () => (await state()).window.budget_minor)
     .toBe(30000);
   const before = await state();
-  await page
-    .locator("input[type=file]")
-    .setInputFiles({
-      name: "invalid.json",
-      mimeType: "application/json",
-      buffer: Buffer.from('{"events":[null],"offers":[]}'),
-    });
+  await page.locator("input[type=file]").setInputFiles({
+    name: "invalid.json",
+    mimeType: "application/json",
+    buffer: Buffer.from('{"events":[null],"offers":[]}'),
+  });
   await expect(page.getByRole("alert")).toContainText("downloadable template");
   expect((await state()).events).toEqual(before.events);
   await snap("04-import-error");
@@ -176,6 +176,66 @@ fs.mkdirSync(out, { recursive: true });
   expect(cached.result.mode).toBe("recorded");
   expect(cached.state.provider_calls).toBe(1);
   checks.push("Real Qloo discovery and cache reuse, one provider attempt");
+  const option =
+    live.participants[0].discovery.new_options[0]?.event_id ||
+    live.participants[0].suggestions[0]?.event_id;
+  expect(option).toBeTruthy();
+  const comparisonId = (await command("comparison_start")).result.id;
+  await command("comparison_response", comparisonId, {
+    participant_id: "p1",
+    event_id: option,
+    response: "interested",
+    source: "qloo",
+  });
+  const compared = (await command("comparison_evaluate", comparisonId)).result;
+  const path = compared.decision_paths[0];
+  expect(path.source).toBe("qloo");
+  expect(path.evidence.approved_favorites[0].name).toBe("Inside Out");
+  expect(path.response).toBe("interested");
+  const exported = await (
+    await context.request.get(
+      origin + `/api/comparisons/${comparisonId}/export`,
+    )
+  ).json();
+  expect(exported.result.decision_paths).toEqual(compared.decision_paths);
+  await reload("Compare discovery");
+  await page
+    .getByRole("combobox", { name: "Discovery source", exact: true })
+    .selectOption("qloo");
+  await page
+    .getByRole("heading", { name: "Follow each choice into the plan." })
+    .scrollIntoViewIfNeeded();
+  await page
+    .locator(".choice-paths")
+    .screenshot({ path: out + "/16-decision-path.png" });
+  const mobile = await context.newPage();
+  await mobile.setViewportSize({ width: 390, height: 844 });
+  await mobile.goto(origin);
+  await mobile.getByRole("button", { name: "Toggle navigation" }).click();
+  await mobile
+    .getByRole("button", { name: "Compare discovery", exact: true })
+    .click();
+  await mobile
+    .locator(".choice-path")
+    .first()
+    .screenshot({ path: out + "/17-mobile-decision-path.png" });
+  expect(
+    await mobile.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  expect(
+    (
+      await new AxeBuilder({ page: mobile })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await mobile.close();
+  checks.push(
+    "Live favorite-to-choice-to-planning path, exact export, and mobile accessibility",
+  );
+  await reload("Discover");
   // Consent removal cannot leave cultural suggestions behind.
   await page
     .locator("summary")
@@ -239,7 +299,9 @@ fs.mkdirSync(out, { recursive: true });
     ),
   ).toBe(true);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole("heading", { name: "Provider evidence index" }).scrollIntoViewIfNeeded();
+  await page
+    .getByRole("heading", { name: "Provider evidence index" })
+    .scrollIntoViewIfNeeded();
   await snap("14b-mobile-provider-evidence");
   expect(
     await page.evaluate(

@@ -175,6 +175,12 @@ def test_discovery_contribution_counts_latest_choices_and_exports_evidence(
     assert result["discovery_contribution"]["qloo_choices_reviewed"] == 1
     export = client.get(f"/api/comparisons/{cid}/export").json()
     assert export["decisions"][0]["evidence"]["id"]
+    path = result["decision_paths"][0]
+    assert len(result["decision_paths"]) == 1
+    assert path["baseline_response"] == "unseen"
+    assert path["outcome"] == "available_not_selected"
+    assert path["evidence"]["id"] == export["decisions"][0]["evidence"]["id"]
+    assert export["result"]["decision_paths"] == result["decision_paths"]
     cmd(
         client,
         "comparison_response",
@@ -188,6 +194,7 @@ def test_discovery_contribution_counts_latest_choices_and_exports_evidence(
     )
     result = cmd(client, "comparison_evaluate", cid).json()["result"]
     assert result["discovery_contribution"]["newly_accepted_qloo_choices"] == 0
+    assert result["decision_paths"][0]["outcome"] == "not_accepted"
 
 
 def test_simulated_outcomes_require_confirmation_and_remain_labeled(client):

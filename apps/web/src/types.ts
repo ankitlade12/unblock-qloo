@@ -218,6 +218,24 @@ export type Comparison = {
     };
   }[];
   result: null | {
+    decision_paths?: {
+      participant_id: string;
+      event_id: string;
+      source: string;
+      baseline_response: string;
+      response: string;
+      evidence: Comparison["decisions"][number]["evidence"];
+      individual_offer_checks: { offer_id: string; blockers: string[] }[];
+      eligible_offer_ids: string[];
+      assigned_offer_id: string | null;
+      selected: boolean;
+      outcome:
+        | "not_accepted"
+        | "blocked"
+        | "no_checked_plan"
+        | "selected"
+        | "available_not_selected";
+    }[];
     discovery_contribution?: {
       qloo_choices_reviewed: number;
       newly_accepted_qloo_choices: number;

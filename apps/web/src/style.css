@@ -4330,3 +4330,58 @@ main summary:focus-visible {
     font-size: 11px;
   }
 }
+
+.audience-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 24px 0;
+}
+.audience-case > p,
+.choice-paths > p {
+  max-width: 80ch;
+  line-height: 1.7;
+}
+.audience-case details,
+.choice-path details {
+  margin-top: 16px;
+  line-height: 1.7;
+}
+.choice-paths {
+  margin: 24px 0;
+}
+.choice-path {
+  margin-top: 18px;
+  padding: 22px;
+  border: 1px solid #ccd3c6;
+  border-radius: 14px;
+  background: #f7f8f3;
+  overflow-wrap: anywhere;
+}
+.choice-path h4 {
+  font-size: 18px;
+  margin: 0 0 20px;
+}
+.choice-path ol {
+  margin: 0;
+  padding-left: 24px;
+  display: grid;
+  gap: 16px;
+}
+.choice-path li strong,
+.choice-path li span {
+  display: block;
+  line-height: 1.6;
+}
+.choice-path li span {
+  color: #4b5d50;
+}
+@media (max-width: 700px) {
+  .audience-steps {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .choice-path {
+    padding: 16px;
+  }
+}

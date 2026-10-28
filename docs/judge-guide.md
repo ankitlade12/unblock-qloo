@@ -2,6 +2,8 @@
 
 This is a synthetic demonstration, not evidence of measured community impact.
 
+For a focused Qloo-led presentation, use [the three-minute script](demo-script.md). In **Compare discovery**, expand the decision path to show the provider-backed favorite → returned film → explicit choice → individual checks → checked group-plan outcome. The export retains the same path. The Overview explains the proposed community-coordinator audience and links its research basis.
+
 The recommended presentation is **Overview → Walk through the story**. Use the six chapters in order:
 
 - **The people:** Meet Jordan, Morgan, and Taylor. Inspect real fields in the synthetic profiles.

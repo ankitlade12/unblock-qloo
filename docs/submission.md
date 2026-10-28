@@ -1,5 +1,7 @@
 # Devpost submission package
 
+Use [the updated copy-paste project story](devpost-story.md), [three-minute presentation](demo-script.md), and [audience/pilot evidence](impact-and-pilot.md). These describe the current decision-path demonstration without claiming an organizer pilot.
+
 Project name: **UNBLOCK**
 
 Tagline: **Discover a shared interest. Make the outing possible.**
@@ -47,7 +49,7 @@ A working API call is not proof of user benefit. Our comparison preserves a stro
 1. Open the live demo and choose **Explore the demo → Discover**.
 2. Keep Alex selected. Choose **Inside Out** in the reviewed fictional profile, explicitly check the consent box, and click **Load reviewed demo profile**.
 3. Click **Run Qloo discovery**. Inspect new options, compatibility caveats, and retained evidence. This spends one provider request; loading the profile spends none.
-4. Open **Compare discovery**, freeze the baseline, choose Qloo-backed suggestions, and record a response. Compare checked plans and export evidence. Unchanged cost/coverage is an honest result.
+4. Open **Compare discovery**, freeze the baseline, choose Qloo-backed suggestions, and record a response. Compare checked plans, inspect **Follow each choice into the plan**, and export evidence. The path links the approved favorite and Qloo evidence to the explicit response, individual checks, and actual assignment outcome. Unchanged cost/coverage is an honest result.
 5. Use **The story** or **Plans** to generate a current proposal. Approve, collect fictional commitments, and confirm the required seats and tickets. Download the final itinerary.
 6. In the proposal, use **Simulate post-event review · fictional outcomes only** and explicitly record an outcome. Exported records include the simulated timestamp. Cancel a used shuttle to inspect stale state and repair.
 

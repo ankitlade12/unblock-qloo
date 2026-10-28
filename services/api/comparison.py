@@ -6,7 +6,7 @@ import hashlib
 import json
 from fastapi import HTTPException
 from .domain import stamp
-from .planner import solve, verify, date
+from .planner import solve, verify, date, blockers
 from .qloo import entities
 
 
@@ -215,7 +215,54 @@ def evaluate(s, c):
         .get("response")
         != "interested"
     ]
+    # Trace each latest decision through the same frozen inputs used by the solver.
+    evaluated = expected(c)
+    evaluated_people = {p["id"]: p for p in evaluated["participants"]}
+    offer_events = {o["id"]: o["event_id"] for o in evaluated["offers"]}
+    decision_paths = []
+    for r in latest.values():
+        pid, eid = r["participant_id"], r["event_id"]
+        checks = [
+            {
+                "offer_id": o["id"],
+                "blockers": blockers(evaluated, evaluated_people[pid], o, at),
+            }
+            for o in evaluated["offers"]
+            if o["event_id"] == eid
+        ]
+        eligible = [x["offer_id"] for x in checks if not x["blockers"]]
+        assigned = after["assignments"].get(pid)
+        selected = bool(assigned and offer_events.get(assigned) == eid)
+        outcome = (
+            "not_accepted"
+            if r["response"] != "interested"
+            else "blocked"
+            if not eligible
+            else "no_checked_plan"
+            if not after["found_plan"]
+            else "selected"
+            if selected
+            else "available_not_selected"
+        )
+        decision_paths.append(
+            {
+                "participant_id": pid,
+                "event_id": eid,
+                "source": r["source"],
+                "baseline_response": baseline_people[pid]["interests"]
+                .get(eid, {})
+                .get("response", "unseen"),
+                "response": r["response"],
+                "evidence": deepcopy(r["evidence"]),
+                "individual_offer_checks": checks,
+                "eligible_offer_ids": eligible,
+                "assigned_offer_id": assigned,
+                "selected": selected,
+                "outcome": outcome,
+            }
+        )
     c["result"] = {
+        "decision_paths": decision_paths,
         "discovery_contribution": {
             "qloo_choices_reviewed": len(qloo_choices),
             "newly_accepted_qloo_choices": len(new_qloo_choices),

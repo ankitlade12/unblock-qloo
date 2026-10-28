@@ -6,6 +6,14 @@ React + TypeScript frontend; FastAPI backend; SQLite persistence; server-side Ql
 
 **Current release is an isolated synthetic demonstration, not a private pilot service.** All 12 participants, eight screenings, operational claims, quotes, and confirmations are fictional. No booking, payment, or external message is made. Credentials are not included in source. Live Qloo search and Insights were verified locally on October 27, 2026; the optional model remains unverified. [Open the public demo](https://unblock-demo.onrender.com) · [Public source](https://github.com/ankitlade12/unblock-qloo). Hosted browser, live Qloo, secure-cookie, and persistence checks passed.
 
+## Product and judging walkthrough
+
+Start with the [three-minute demo script](docs/demo-script.md). The proposed first user is a community activity coordinator balancing preferences, access needs, transport, and a shared outing budget. The Overview explains that job and links the problem evidence.
+
+In **Compare discovery**, **Follow each choice into the plan** connects retained Qloo evidence and approved favorites to the explicit response, individual offer checks, and actual group-plan outcome. Accepted options are not automatically selected. The export retains the same decision path.
+
+[Copy-paste Devpost story](docs/devpost-story.md) · [Audience and proposed pilot](docs/impact-and-pilot.md) · [Judging evidence map](docs/judging-evidence.md)
+
 ## Run locally
 
 Prerequisites: Python 3.14 and Node 22.12+ (tested on Python 3.14 / Node 25).

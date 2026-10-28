@@ -219,7 +219,9 @@ test("mobile navigation, all screens and no horizontal overflow", async ({
     ).toBeTruthy();
   }
   const { default: AxeBuilder } = await import("@axe-core/playwright");
-  const populatedEvidence = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
+  const populatedEvidence = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
   expect(populatedEvidence.violations).toEqual([]);
   await page.getByRole("button", { name: "Toggle navigation" }).click();
   await page.getByRole("button", { name: "Overview", exact: true }).click();
@@ -235,7 +237,9 @@ test("mobile navigation, all screens and no horizontal overflow", async ({
   await page
     .getByRole("button", { name: "Save settings", exact: true })
     .click();
-  await expect(page.getByText("Changes saved.", { exact: true })).toContainText("Changes saved.");
+  await expect(page.getByText("Changes saved.", { exact: true })).toContainText(
+    "Changes saved.",
+  );
   await page.getByRole("button", { name: "Toggle navigation" }).click();
   await page.getByRole("button", { name: "Plans", exact: true }).click();
   await page
@@ -545,6 +549,12 @@ test("discovery comparison freezes choices, shows unchanged result, and rejects 
     path: "test-results/comparison-desktop.png",
     fullPage: true,
   });
+  await expect(
+    page.getByRole("heading", { name: "Follow each choice into the plan." }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Discovery to planning evidence" }),
+  ).toContainText("Explored directly in the catalogue; no Qloo attribution.");
   const download = page.waitForEvent("download");
   await page.getByRole("link", { name: "Export comparison evidence" }).click();
   expect((await download).suggestedFilename()).toContain("comparison");
