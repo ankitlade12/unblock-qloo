@@ -19,6 +19,10 @@ The [official criteria](https://qloo.devpost.com/rules) weight implementation, d
 
 ## Verification
 
-Local: **55 backend tests**, production build, and **six browser journeys** passed. These include exact exported provenance, latest-decision deduplication, meaningful planning outcomes, mobile overflow, and automated accessibility checks. The optional Starlette test-transport deprecation warning remains. Hosted release verification is recorded below when complete.
+Local: **55 backend tests**, production build, and **six browser journeys** passed. These include exact exported provenance, latest-decision deduplication, meaningful planning outcomes, mobile overflow, and automated accessibility checks. The optional Starlette test-transport deprecation warning remains. Release `8dcae65` is live on Render (deployment `dep-dbh3ei6k1f9s738jp9c0`). [GitHub CI](https://github.com/ankitlade12/unblock-qloo/actions/runs/40740377768) passed. The public live check passed **ten scenario groups**, including the actual favorite-to-choice-to-planning path, exact exported decision-path equality, mobile layout/accessibility, consent withdrawal, stale actions, replanning, and deletion. It used one Qloo request, returned three matches and two new options, and recorded zero page exceptions.
+
+[Desktop decision path](screenshots/rubric-2026-10-28/decision-path.png) · [Mobile decision path](screenshots/rubric-2026-10-28/decision-path-mobile.png) · [Machine-readable live checks](screenshots/rubric-2026-10-28/checks.json)
+
+The live scripted choice accepted Coco. Its individual offer checks passed, while the group comparison retained a different assignment; the new view reported that outcome accurately. No numerical uplift or real human acceptance is inferred.
 
 A strong hackathon submission can demonstrate potential without claiming a pilot. The remaining real-world evidence must come from actual consenting organizers and participants; code and presentation cannot supply it.
