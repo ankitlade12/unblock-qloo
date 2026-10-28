@@ -292,6 +292,8 @@ def generate(s, task):
         {
             "at": stamp(),
             "task": task,
+            "input_revision": s["revision"],
+            "plan_count": len(result["plans"]),
             "mode": "deterministic workflow agent",
             "steps": traces,
             "blockers": result["blockers"],
@@ -697,7 +699,18 @@ def command(cmd: Command, request: Request):
                 ]
             else:
                 raise ValueError("Unknown action")
-        except (KeyError, ValueError, ValidationError) as exc:
+        except ValidationError as exc:
+            if action == "import":
+                fields = ", ".join(
+                    ".".join(str(part) for part in error["loc"])
+                    for error in exc.errors()[:3]
+                )
+                raise HTTPException(
+                    422,
+                    f"Import could not be read. Check {fields} against the downloadable template. No catalogue data was changed.",
+                )
+            raise HTTPException(422, str(exc)[:500])
+        except (KeyError, ValueError) as exc:
             raise HTTPException(422, str(exc)[:500])
         if material:
             s["revision"] += 1

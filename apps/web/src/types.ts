@@ -61,7 +61,12 @@ export type Person = {
     mapped: number;
     already_interested?: number;
     favorite_names?: string[];
-    new_options?: { event_id: string; title: string; previous_response: string; individually_compatible: boolean }[];
+    new_options?: {
+      event_id: string;
+      title: string;
+      previous_response: string;
+      individually_compatible: boolean;
+    }[];
     mode: string;
     evidence_id: string;
     retrieved_at: string;
@@ -114,7 +119,14 @@ export type Proposal = {
 export type State = {
   comparisons?: Comparison[];
   demo_profiles?: string[];
-  provider_budget?: { limit: number; used: number; remaining: number; utc_day: string; reset_at: string; scope: string };
+  provider_budget?: {
+    limit: number;
+    used: number;
+    remaining: number;
+    utc_day: string;
+    reset_at: string;
+    scope: string;
+  };
   revision: number;
   name: string;
   window: {
@@ -155,6 +167,8 @@ export type State = {
     simulated_at?: string | null;
   }[];
   traces: {
+    input_revision?: number;
+    plan_count?: number;
     at: string;
     task: string;
     mode: string;
@@ -204,7 +218,12 @@ export type Comparison = {
     };
   }[];
   result: null | {
-    discovery_contribution?: { qloo_choices_reviewed: number; newly_accepted_qloo_choices: number; newly_accepted_event_ids: string[]; limitation: string };
+    discovery_contribution?: {
+      qloo_choices_reviewed: number;
+      newly_accepted_qloo_choices: number;
+      newly_accepted_event_ids: string[];
+      limitation: string;
+    };
     before: ComparisonPlan;
     after: ComparisonPlan;
     coverage_delta: number | null;

@@ -6,10 +6,20 @@ test("organizer and participant journey, confirmation, disruption and isolation"
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   let releaseInitial!: () => void;
-  await page.route("**/api/state", async (route) => {
-    await new Promise<void>((resolve) => { releaseInitial = resolve; });
-    await route.fulfill({ status: 401, contentType: "application/json", body: '{"detail":"Start a demo workspace first"}' });
-  }, { times: 1 });
+  await page.route(
+    "**/api/state",
+    async (route) => {
+      await new Promise<void>((resolve) => {
+        releaseInitial = resolve;
+      });
+      await route.fulfill({
+        status: 401,
+        contentType: "application/json",
+        body: '{"detail":"Start a demo workspace first"}',
+      });
+    },
+    { times: 1 },
+  );
   await page.goto("/");
   await page
     .getByRole("button", { name: "Explore the demo", exact: true })
@@ -20,7 +30,10 @@ test("organizer and participant journey, confirmation, disruption and isolation"
     }),
   ).toBeVisible();
   await expect.poll(() => Boolean(releaseInitial)).toBe(true);
-  const lateInitial = page.waitForResponse((response) => response.url().endsWith("/api/state") && response.status() === 401);
+  const lateInitial = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/state") && response.status() === 401,
+  );
   releaseInitial();
   await lateInitial;
   await page.screenshot({
@@ -34,10 +47,21 @@ test("organizer and participant journey, confirmation, disruption and isolation"
   await expect(
     page.getByRole("button", { name: "Run Qloo discovery", exact: true }),
   ).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Load reviewed demo profile", exact: true })).toBeDisabled();
-  await page.getByRole("checkbox", { name: /Use this fictional profile for Alex/ }).check();
-  await page.getByRole("button", { name: "Load reviewed demo profile", exact: true }).click();
-  await expect(page.getByText("8 of 8 screenings mapped. Each selection is reviewed.")).toBeVisible();
+  await expect(
+    page.getByRole("button", {
+      name: "Load reviewed demo profile",
+      exact: true,
+    }),
+  ).toBeDisabled();
+  await page
+    .getByRole("checkbox", { name: /Use this fictional profile for Alex/ })
+    .check();
+  await page
+    .getByRole("button", { name: "Load reviewed demo profile", exact: true })
+    .click();
+  await expect(
+    page.getByText("8 of 8 screenings mapped. Each selection is reviewed."),
+  ).toBeVisible();
   await page
     .locator("summary")
     .filter({ hasText: "Personalize with Qloo" })
@@ -106,13 +130,31 @@ test("organizer and participant journey, confirmation, disruption and isolation"
   const download = page.waitForEvent("download");
   await page.getByRole("link", { name: "Final calendar itinerary" }).click();
   expect((await download).suggestedFilename()).toMatch(/\.ics$/);
-  await page.getByRole("button", { name: "Simulate post-event review · fictional outcomes only", exact: true }).click();
+  await page
+    .getByRole("button", {
+      name: "Simulate post-event review · fictional outcomes only",
+      exact: true,
+    })
+    .click();
   await expect(page.getByText(/Simulated post-event review:/)).toBeVisible();
-  await page.getByRole("combobox", { name: "Alex attendance", exact: true }).selectOption("attended");
-  await expect.poll(async () => {
-    const state = await (await page.request.get("/api/state")).json();
-    return state.outcomes.some((outcome: {participant_id: string; attendance: string; simulated_at?: string}) => outcome.participant_id === "p1" && outcome.attendance === "attended" && !!outcome.simulated_at);
-  }).toBe(true);
+  await page
+    .getByRole("combobox", { name: "Alex attendance", exact: true })
+    .selectOption("attended");
+  await expect
+    .poll(async () => {
+      const state = await (await page.request.get("/api/state")).json();
+      return state.outcomes.some(
+        (outcome: {
+          participant_id: string;
+          attendance: string;
+          simulated_at?: string;
+        }) =>
+          outcome.participant_id === "p1" &&
+          outcome.attendance === "attended" &&
+          !!outcome.simulated_at,
+      );
+    })
+    .toBe(true);
   await page.getByRole("button", { name: "Resources", exact: true }).click();
   await page
     .getByRole("button", { name: "Mark unavailable", exact: true })
@@ -141,6 +183,20 @@ test("organizer and participant journey, confirmation, disruption and isolation"
 test("mobile navigation, all screens and no horizontal overflow", async ({
   page,
 }) => {
+  // Layout fixture: long provider identifiers must fit after real discovery too.
+  await page.route("**/api/demo", async (route) => {
+    const response = await route.fetch();
+    const state = await response.json();
+    state.evidence = [
+      {
+        id: "12345678-1234-1234-1234-123456789012",
+        path: "/v2/insights",
+        fingerprint: "a".repeat(64),
+        retrieved_at: new Date().toISOString(),
+      },
+    ];
+    await route.fulfill({ response, json: state });
+  });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await page
@@ -168,6 +224,28 @@ test("mobile navigation, all screens and no horizontal overflow", async ({
     path: "test-results/overview-mobile.png",
     fullPage: true,
   });
+  await page.getByRole("button", { name: "Toggle navigation" }).click();
+  await page
+    .getByRole("button", { name: "Workspace settings", exact: true })
+    .click();
+  await page.getByLabel("Organizer budget (USD)", { exact: true }).fill("0");
+  await page
+    .getByRole("button", { name: "Save settings", exact: true })
+    .click();
+  await expect(page.getByText("Changes saved.", { exact: true })).toContainText("Changes saved.");
+  await page.getByRole("button", { name: "Toggle navigation" }).click();
+  await page.getByRole("button", { name: "Plans", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Generate plans", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", {
+      name: "No checked plan found for these inputs.",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Review budget and inputs" }),
+  ).toBeVisible();
 });
 
 test("keyboard entry and accessibility scan", async ({ page }) => {

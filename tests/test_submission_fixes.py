@@ -249,3 +249,16 @@ def test_remaining_budget_is_shared_and_failed_attempts_count(client, monkeypatc
     assert client.get("/api/state").json()["provider_budget"]["remaining"] == 1
     client.post("/api/demo", json={})
     assert client.get("/api/state").json()["provider_budget"]["remaining"] == 1
+
+
+def test_empty_plan_trace_describes_the_current_inputs(client):
+    cmd(client, "window", data={"budget_minor": 0, "name": "No budget"})
+    response = cmd(client, "plan").json()
+    assert response["result"]["plans"] == []
+    trace = response["state"]["traces"][0]
+    assert trace["plan_count"] == 0
+    assert trace["input_revision"] == response["state"]["revision"]
+    assert (
+        "downloadable template"
+        in cmd(client, "import", data={"events": [None]}).json()["detail"]
+    )

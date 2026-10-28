@@ -122,7 +122,9 @@ function App() {
       .catch(() => {
         if (active && !sessionStarted.current) setWelcome(true);
       });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
   useEffect(() => {
     if (!s || busy) return;
@@ -179,7 +181,9 @@ function App() {
       setS(response.state);
       setNotice(
         ["plan", "replan"].includes(action)
-          ? "Planning complete. Review the options and any blockers."
+          ? response.result?.plans?.length
+            ? "Planning complete. Review the options and any blockers."
+            : "No checked plan found. Review the budget, resources, and requirements."
           : "Changes saved.",
       );
       return response.result;
@@ -213,6 +217,9 @@ function App() {
         p.status !== "Needs review after a change",
     ) || [];
   const best = current[0];
+  const noPlanFound =
+    s?.traces[0]?.input_revision === s?.revision &&
+    s?.traces[0]?.plan_count === 0;
   const personName = (id: string) =>
     s?.participants.find((p) => p.id === id)?.name || id;
   const eventFor = (oid: string) =>
@@ -800,7 +807,9 @@ function App() {
                   }
                 }}
                 discover={() => run("discover", person.id)}
-                loadProfile={(favorite) => run("demo_profile", person.id, { favorite, consent: true })}
+                loadProfile={(favorite) =>
+                  run("demo_profile", person.id, { favorite, consent: true })
+                }
                 compare={() => go("Compare discovery")}
               />
               <details ref={personalization} className="personalize-disclosure">
@@ -1185,7 +1194,7 @@ function App() {
                     : "Generate plans"}
                 </button>
               </div>
-              {!selected && (
+              {!selected && s.model_available && (
                 <section className="panel agent-panel spaced">
                   <div className="section-heading">
                     <div>
@@ -1558,9 +1567,25 @@ function App() {
                             is no longer actionable.
                           </p>
                           {p.outcome_simulation_at ? (
-                            <div className="info-strip" role="status">Simulated post-event review: {when(p.outcome_simulation_at)}. Recorded outcomes are fictional; actual time, planning validity, and bookings are unchanged.</div>
+                            <div className="info-strip" role="status">
+                              Simulated post-event review:{" "}
+                              {when(p.outcome_simulation_at)}. Recorded outcomes
+                              are fictional; actual time, planning validity, and
+                              bookings are unchanged.
+                            </div>
                           ) : (
-                            <button className="secondary" disabled={busy} onClick={() => run("simulate_outcomes", p.id, { acknowledge: true })}>Simulate post-event review · fictional outcomes only</button>
+                            <button
+                              className="secondary"
+                              disabled={busy}
+                              onClick={() =>
+                                run("simulate_outcomes", p.id, {
+                                  acknowledge: true,
+                                })
+                              }
+                            >
+                              Simulate post-event review · fictional outcomes
+                              only
+                            </button>
                           )}
                           {Object.keys(p.assignments).map((id) => (
                             <div className="outcome-row" key={id}>
@@ -1603,7 +1628,12 @@ function App() {
                                               (o) => o.id === p.assignments[id],
                                             )?.event_id,
                                         )?.end || "",
-                                      ).getTime() > (p.outcome_simulation_at ? new Date(p.outcome_simulation_at).getTime() : Date.now())
+                                      ).getTime() >
+                                        (p.outcome_simulation_at
+                                          ? new Date(
+                                              p.outcome_simulation_at,
+                                            ).getTime()
+                                          : Date.now())
                                     }
                                   >
                                     {v}
@@ -1624,19 +1654,33 @@ function App() {
                       <div className="empty-art">
                         <Sparkles size={38} />
                       </div>
-                      <h2>Let’s see what’s possible.</h2>
+                      <h2>
+                        {noPlanFound
+                          ? "No checked plan found for these inputs."
+                          : "Let’s see what’s possible."}
+                      </h2>
                       <p>
-                        The planner will check each person’s accepted
-                        experiences against transport, tickets, access
-                        requirements, timing, and your{" "}
-                        {money(s.window.budget_minor)} budget.
+                        {noPlanFound
+                          ? `No actionable outing was found within the current ${money(s.window.budget_minor)} budget, transport, and participant requirements. Review these inputs before trying again.`
+                          : `The planner will check accepted experiences against transport, tickets, access requirements, timing, and your ${money(s.window.budget_minor)} budget.`}
                       </p>
+                      {noPlanFound && (
+                        <button
+                          className="secondary"
+                          onClick={() => go("Settings")}
+                        >
+                          Review budget and inputs
+                        </button>
+                      )}
                       <button
                         className="primary"
                         disabled={busy}
                         onClick={() => void plan()}
                       >
-                        Generate candidate plans <ArrowRight size={17} />
+                        {noPlanFound
+                          ? "Check again"
+                          : "Generate candidate plans"}{" "}
+                        <ArrowRight size={17} />
                       </button>
                     </div>
                   )}
