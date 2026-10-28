@@ -23,7 +23,7 @@ For direct workspace exploration:
 8. **No feasible result:** set the budget to $0 in Settings and generate again. The app reports constraints instead of weakening requirements.
 9. **Evidence:** inspect the audit trail and limitations. Synthetic acceptance is not real acceptance; confirmation is not observed attendance.
 
-A functional public URL must be verified before presenting this as a hackathon-ready submission. Private pilot accounts and real provider integrations are not part of this demo.
+Open https://unblock-demo.onrender.com for the verified public walkthrough. Private pilot accounts and real provider integrations are not part of this demo.
 
 Suggested presentation line: “Discovering something someone likes is only the beginning. Can they actually get there, with the support they need? UNBLOCK follows an explicit choice through transport, budget, commitments, and disruption—and keeps the evidence when the answer changes.”
 

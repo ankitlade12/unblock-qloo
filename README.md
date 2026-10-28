@@ -4,7 +4,7 @@ Discover shared cultural interests. Turn explicit choices into feasible communit
 
 React + TypeScript frontend; FastAPI backend; SQLite persistence; server-side Qloo adapter; optional bounded language-model tools; deterministic planner with an independent feasibility checker.
 
-**Current release is an isolated synthetic demonstration, not a private pilot service.** All 12 participants, eight screenings, operational claims, quotes, and confirmations are fictional. No booking, payment, or external message is made. Credentials are not included in source. Live Qloo search and Insights were verified locally on October 27, 2026; the optional model remains unverified. Public hosting remains pending. [Public source is on GitHub](https://github.com/ankitlade12/unblock-qloo).
+**Current release is an isolated synthetic demonstration, not a private pilot service.** All 12 participants, eight screenings, operational claims, quotes, and confirmations are fictional. No booking, payment, or external message is made. Credentials are not included in source. Live Qloo search and Insights were verified locally on October 27, 2026; the optional model remains unverified. [Open the public demo](https://unblock-demo.onrender.com) · [Public source](https://github.com/ankitlade12/unblock-qloo). Hosted browser, live Qloo, secure-cookie, and persistence checks passed.
 
 ## Run locally
 
@@ -77,29 +77,29 @@ Install the Playwright Chromium browser if needed with `cd apps/web && npx playw
 docker compose up --build
 ```
 
-Local Docker URL: http://localhost:8011. Container builds are supplied but have not been executed in this environment.
+Local Docker URL: http://localhost:8011. The Docker image has been built and executed successfully on Render. The local Docker daemon remains unavailable.
 
 For a public demo, deploy the Dockerfile on a container host with **one application process and a persistent disk at `/app/data`**. Set `APP_ORIGIN` to the exact HTTPS origin and `COOKIE_SECURE=true`. Set provider keys as host secrets. Keep TLS termination enabled. Health check: `/api/health`. Do not use ephemeral serverless storage for SQLite or horizontally scale this prototype. Use the published public URL in Playwright and run the journey there before claiming hosted readiness.
 
-**Deployment remains outstanding.** No host account/project was selected or provisioned, and no external URL is claimed. The separate Sites hosting runtime is Workers-based and does not run this PRD's Python/SQLite service; the application preserves the requested Python architecture instead of publishing a nonfunctional frontend-only shell.
+**Public deployment:** https://unblock-demo.onrender.com. Render runs one Starter Docker service in Ohio with a 1 GB persistent disk at `/app/data`. The user approved a $7.25/month base cost, before taxes or usage overages. Secrets are configured privately. Automatic deploys are disabled; deploy reviewed commits after CI passes.
 
 ## Scope and limits
 
-See [PRD coverage](docs/requirements-coverage.md). P0 application workflows are implemented, with a local Qloo smoke check complete and hosted acceptance pending. Selected P1 capabilities (withdrawal, provider evidence, explicit outcomes) are included. Private organizer accounts, expiring invitations, participant-level authorization for real records, PostgreSQL, multiple planning windows, CSV imports, production job streaming, and real provider integrations are not implemented. These must precede a real pilot. No organizer interview, controlled recommendation experiment, cost savings, or real attendance improvement is claimed.
+See [PRD coverage](docs/requirements-coverage.md). P0 application workflows are implemented; local and hosted Qloo checks and hosted acceptance passed. Selected P1 capabilities (withdrawal, provider evidence, explicit outcomes) are included. Private organizer accounts, expiring invitations, participant-level authorization for real records, PostgreSQL, multiple planning windows, CSV imports, production job streaming, and real provider integrations are not implemented. These must precede a real pilot. No organizer interview, controlled recommendation experiment, cost savings, or real attendance improvement is claimed.
 
 The demo deliberately lets its session owner act as every **fictional** participant. It must not be used to host real people. Backend limits include 12 events, eight offers, 30 proposals per workspace, and a three-second search budget. Search results report whether exhaustive enumeration finished. Provider/model calls run outside database transactions. Short optimistic commits reject concurrent workspace edits with HTTP 409 rather than overwriting them; production use still needs durable jobs and a production database.
 
 [Architecture](docs/architecture.md) · [Data provenance](docs/data-provenance.md) · [Judge guide](docs/judge-guide.md) · [Submission checklist](docs/submission.md) · [MIT license](LICENSE)
 
-## Optional Render deployment
+## Render deployment
 
-`render.yaml` prepares a single Docker web service with a 1 GB persistent disk. This uses paid resources; no account, service, or charge has been created. Render documents disks as paid-service features: https://render.com/docs/disks. Blueprint reference: https://render.com/docs/blueprint-spec.
+`render.yaml` describes the deployed single Docker web service with a 1 GB persistent disk. These paid resources were provisioned with explicit user approval. Render documents disks as paid-service features: https://render.com/docs/disks. Blueprint reference: https://render.com/docs/blueprint-spec.
 
 1. Connect [the public repository](https://github.com/ankitlade12/unblock-qloo) to your Render account.
 2. Create a Blueprint from the repository. Review the quoted service and disk costs before applying. Set `APP_ORIGIN` to the exact assigned HTTPS origin; correct it and redeploy if the assigned hostname differs.
 3. Add `QLOO_API_KEY` as a secret only when issued. The unconfigured service supports the labeled synthetic workflow. Add model secrets only if using the optional assistant.
 4. Check build/start logs and `/api/health`. Verify the mounted `/app/data` is writable by container user 10001; a disk permission error must be resolved before accepting the deployment.
-5. Run the browser journey on the public origin and verify a saved workspace survives a service restart. Test cookies, downloads, fresh-browser isolation, and live Qloo separately. The blueprint has not been deployed or provider-validated here.
+5. Run the browser journey on the public origin and verify a saved workspace survives a service restart. Test cookies, downloads, fresh-browser isolation, and live Qloo separately. The blueprint passed Render validation. The actual service and disk were provisioned through CLI/API; the hosted acceptance checks below passed.
 
 The visual walkthrough now opens with an illustrated community scene, an inspectable taste-to-choice path, participant groups by outing, and affected-person chips during a shuttle disruption. Illustrations do not imply live bookings or measured outcomes.
 
@@ -117,3 +117,9 @@ An opt-in repeatable live check mapped all eight screenings, tested three favori
 ```
 
 The aggregate report is saved under ignored `data/`. Run offline browser checks against an isolated server/database with empty provider keys; set `PLAYWRIGHT_BASE_URL` to its origin. Test expectations also adapt to configured Qloo readiness, without making paid/provider requests. GitHub Actions runs the offline build, backend tests, and browser journey.
+
+## Hosted verification
+
+All six browser journeys pass against the public HTTPS origin, including mobile layouts, keyboard/axe checks, commitments, confirmations, downloads, disruption/repair, comparisons, and isolated browser sessions. A deliberately delayed initial session response exposed a welcome-screen race; it is fixed and included in the first browser regression. GitHub Actions passes all 38 backend tests and six browser journeys on that fix.
+
+The hosted opt-in Qloo evaluation mapped eight screenings and tested three profiles using 14 provider attempts. It returned 3/1/1 catalogue matches, with no planning improvement. Secure, HttpOnly, SameSite cookies were checked. A saved synthetic workspace survived the subsequent release restart with identical state, confirming persistent-disk behavior. The optional model remains unconfigured and unverified live.

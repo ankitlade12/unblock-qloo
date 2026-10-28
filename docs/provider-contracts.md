@@ -19,3 +19,5 @@ Raw responses remain in the private workspace database. No credential or raw res
 ## Repeatable expanded check
 
 `scripts/verify_live.py --allow-live` passed with eight mapped screenings, three profiles (Inside Out, Moonrise Kingdom, My Neighbor Totoro), and 14 provider attempts. Catalogue matches were 3, 1, and 1 respectively. Original authored interests were restored at the reviewed mapping versions before comparison, and all eight screenings had synthetic transport packages. Each profile retained 12 served at $224, with no changed assignments or cost reduction. Scripted uptake is explicitly labeled and is not real acceptance or causal benefit. No optional language-model call was made.
+
+The same expanded check passed on https://unblock-demo.onrender.com with 14 provider attempts and matching 3/1/1 catalogue results. Hosted evidence export succeeded. Optional model behavior and real-world benefit remain unverified.
