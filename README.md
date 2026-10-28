@@ -69,7 +69,7 @@ npm run build --prefix apps/web
 npm run test:e2e --prefix apps/web
 ```
 
-Install the Playwright Chromium browser if needed with `cd apps/web && npx playwright install chromium`. Alternatively set `CHROMIUM_PATH` to an installed Chromium executable. Tests cover the actual UI/API/database journey, mobile layouts, keyboard navigation, automated accessibility scanning, isolation, stale versions, idempotency, independent solver verification, small exhaustive-oracle cases, and mocked provider/tool boundaries. Current results: 38 backend tests and six browser scenarios passed. See [verification](docs/verification.md) for the actual run results and limits.
+Install the Playwright Chromium browser if needed with `cd apps/web && npx playwright install chromium`. Alternatively set `CHROMIUM_PATH` to an installed Chromium executable. Tests cover the actual UI/API/database journey, mobile layouts, keyboard navigation, automated accessibility scanning, isolation, stale versions, idempotency, independent solver verification, small exhaustive-oracle cases, and mocked provider/tool boundaries. Current results: 48 backend tests and six browser scenarios passed. See [verification](docs/verification.md) for the actual run results and limits.
 
 ## Deploy
 
@@ -120,6 +120,21 @@ The aggregate report is saved under ignored `data/`. Run offline browser checks 
 
 ## Hosted verification
 
-All six browser journeys pass against the public HTTPS origin, including mobile layouts, keyboard/axe checks, commitments, confirmations, downloads, disruption/repair, comparisons, and isolated browser sessions. A deliberately delayed initial session response exposed a welcome-screen race; it is fixed and included in the first browser regression. GitHub Actions passes all 38 backend tests and six browser journeys on that fix.
+All six browser journeys pass against the public HTTPS origin, including mobile layouts, keyboard/axe checks, commitments, confirmations, downloads, disruption/repair, comparisons, and isolated browser sessions. A deliberately delayed initial session response exposed a welcome-screen race; it is fixed and included in the first browser regression. GitHub Actions passes all 48 backend tests and six browser journeys on that fix.
 
 The hosted opt-in Qloo evaluation mapped eight screenings and tested three profiles using 14 provider attempts. It returned 3/1/1 catalogue matches, with no planning improvement. Secure, HttpOnly, SameSite cookies were checked. A saved synthetic workspace survived the subsequent release restart with identical state, confirming persistent-disk behavior. The optional model remains unconfigured and unverified live.
+
+## Fast judge walkthrough
+
+Discover now offers three reviewed fictional profiles. Select a favorite, explicitly consent, load the profile, and run Qloo discovery. Eight catalogue identities come from reviewed search results in `services/api/reviewed_catalogue.json`; they are not generated recommendations. Profile loading makes no external request and preserves original interests. Each profile needs one live Insights call rather than repeated catalogue searches.
+
+The result shows newly surfaced options and individual access/timing compatibility. Only explicit choices enter planning. Comparison exports count distinct newly accepted Qloo-backed choices using the final response, separately from coverage and cost. Discovery, favorites, and consent metadata no longer invalidate approved plans; operational edits and explicit interest changes still do.
+
+After confirming a proposal, **Simulate post-event review** enables fictional attendance within the 24-hour workspace. The simulation affects outcome entry only. Real time, planning validity, and booking status do not change, and every simulated outcome carries its timestamp in the export.
+
+```sh
+# Three live calls, one per reviewed profile; choices are explicitly scripted.
+.venv/bin/python scripts/verify_judge.py --allow-live --base-url https://unblock-demo.onrender.com
+```
+
+The app shows its shared remaining daily allowance. `Judging availability` checks HTTPS, storage, configuration, and remaining application budget hourly until November 7 UTC, without making provider calls; it cannot guarantee the provider’s upstream quota. Service deletion remains a separate action after judging/finalist follow-up. See [submission package](docs/submission.md) for paste-ready entry text and judge instructions.

@@ -1,0 +1,29 @@
+name: Judging availability
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+permissions:
+  contents: read
+jobs:
+  public-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check public storage and discovery allowance through judging
+        run: |
+          python3 - <<'PY'
+          import datetime, json, urllib.request
+          today = datetime.datetime.now(datetime.timezone.utc)
+          if today >= datetime.datetime(2026, 11, 7, tzinfo=datetime.timezone.utc):
+              print('Judging monitoring window complete; no requests made. Hosting cleanup remains a separate approved action.')
+              raise SystemExit(0)
+          with urllib.request.urlopen('https://unblock-demo.onrender.com/api/health', timeout=45) as response:
+              data = json.load(response)
+          assert data['status'] == 'ok', 'Application storage unhealthy'
+          assert data['qloo_configured'], 'Qloo configuration unavailable'
+          budget = data['qloo_budget']
+          print(f"Application discovery allowance: {budget['remaining']}/{budget['limit']}; reset {budget['reset_at']}")
+          assert budget['remaining'] > 10, 'Discovery allowance low: review before judging; do not remove spending controls'
+          print('Public HTTPS, storage, configured discovery, and application allowance passed. No provider request was made.')
+          PY

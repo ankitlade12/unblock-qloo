@@ -74,6 +74,11 @@ class Offer(Strict):
         return self
 
 
+class CatalogueImport(Strict):
+    events: list[Event] = Field(min_length=1, max_length=12)
+    offers: list[Offer] = Field(default_factory=list, max_length=8)
+
+
 class Requirements(Strict):
     available_from: datetime
     available_until: datetime

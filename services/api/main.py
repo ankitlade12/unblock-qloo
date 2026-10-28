@@ -3,7 +3,7 @@ import json
 import os
 from copy import deepcopy
 from contextlib import closing
-from datetime import datetime
+from datetime import timedelta
 from pathlib import Path
 from typing import Any, Literal
 from uuid import uuid4
@@ -11,11 +11,17 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import Field, ValidationError
-from .domain import Strict, Event, Offer, Requirements, stamp, now
+from .domain import Strict, Event, Offer, Requirements, CatalogueImport, stamp, now
 from . import store, qloo, agent, comparison
 from .planner import solve, verify, date
 
 app = FastAPI(title="UNBLOCK", version="1.0.0")
+REVIEWED = json.loads(Path(__file__).with_name("reviewed_catalogue.json").read_text())
+DEMO_FAVORITES = {
+    x["name"]: x
+    for x in REVIEWED
+    if x["name"] in ("Inside Out", "Moonrise Kingdom", "My Neighbor Totoro")
+}
 
 
 @app.middleware("http")
@@ -37,6 +43,13 @@ async def safety(request: Request, call_next):
                 return Response("Request too large", 413)
         except ValueError:
             return Response("Invalid length", 400)
+        body = bytearray()
+        async for chunk in request.stream():
+            if len(body) + len(chunk) > 150000:
+                return Response("Request too large", 413)
+            body.extend(chunk)
+        # Starlette's cached request replays this bounded body to the JSON parser.
+        request._body = bytes(body)
     response = await call_next(request)
     response.headers.update(
         {
@@ -91,11 +104,20 @@ def snapshot(s):
 
 
 def fingerprint(s):
-    return hashlib.sha256(json.dumps(snapshot(s), sort_keys=True).encode()).hexdigest()
+    operational = snapshot(s)
+    operational["participants"] = [
+        {k: p[k] for k in ("id", "name", "requirements", "interests")}
+        for p in operational["participants"]
+    ]
+    return hashlib.sha256(json.dumps(operational, sort_keys=True).encode()).hexdigest()
 
 
 def status(s, p):
-    if p["stale"] or p["input_hash"] != fingerprint(s) or verify(s, p["assignments"]):
+    if (
+        p["stale"]
+        or fingerprint(p["snapshot"]) != fingerprint(s)
+        or verify(s, p["assignments"])
+    ):
         return "Needs review after a change"
     if not p["approval"]:
         return "Awaiting organizer approval"
@@ -128,6 +150,8 @@ def public(s):
     )
     copy["comparisons"] = [comparison.public(s, c) for c in s.get("comparisons", [])]
     copy["operational_mode"] = "synthetic"
+    copy["demo_profiles"] = list(DEMO_FAVORITES)
+    copy["provider_budget"] = store.provider_budget("QLOO")
     return copy
 
 
@@ -144,6 +168,7 @@ def health():
     try:
         with closing(store.connect()) as db:
             db.execute("SELECT 1 FROM workspaces LIMIT 1")
+        budget = store.provider_budget("QLOO")
     except Exception:
         raise HTTPException(503, "Workspace storage is unavailable")
     return {
@@ -151,6 +176,7 @@ def health():
         "qloo_configured": bool(os.getenv("QLOO_API_KEY")),
         "workspace_mode": "synthetic-only",
         "storage": "sqlite",
+        "qloo_budget": budget,
     }
 
 
@@ -369,14 +395,9 @@ def command(cmd: Command, request: Request):
                 material = True
             elif action == "import":
                 # Demo imports remain synthetic; no real participant data is accepted.
-                events = [
-                    Event(**e).model_dump(mode="json") for e in d.get("events", [])
-                ]
-                offers = [
-                    Offer(**o).model_dump(mode="json") for o in d.get("offers", [])
-                ]
-                if not events or len(events) > 12 or len(offers) > 8:
-                    raise ValueError("Import needs 1–12 events and up to 8 offers")
+                imported = CatalogueImport(**d)
+                events = [e.model_dump(mode="json") for e in imported.events]
+                offers = [o.model_dump(mode="json") for o in imported.offers]
                 if len({e["id"] for e in events}) != len(events) or len(
                     {o["id"] for o in offers}
                 ) != len(offers):
@@ -407,6 +428,40 @@ def command(cmd: Command, request: Request):
                     p["interests"] = {}
                     p["suggestions"] = []
                     p.pop("discovery", None)
+                material = True
+            elif action == "demo_profile":
+                if s["proposals"] or s.get("comparisons"):
+                    raise HTTPException(
+                        409, "Start a new demo before loading a reviewed profile"
+                    )
+                if (
+                    d.get("consent") is not True
+                    or not isinstance(d.get("favorite"), str)
+                    or d["favorite"] not in DEMO_FAVORITES
+                ):
+                    raise ValueError(
+                        "Explicit demo consent and a reviewed favorite are required"
+                    )
+                p = find(s, "participants", cmd.target)
+                by_title = {x["name"]: x for x in REVIEWED}
+                if any(
+                    e["title"] not in by_title
+                    or (
+                        e["entity_id"]
+                        and e["entity_id"] != by_title[e["title"]]["entity_id"]
+                    )
+                    for e in s["events"]
+                ):
+                    raise ValueError(
+                        "Reviewed profiles require the original demonstration catalogue"
+                    )
+                for e in s["events"]:
+                    e["entity_id"] = by_title[e["title"]]["entity_id"]
+                p["consent"] = True
+                p["favorites"] = [deepcopy(DEMO_FAVORITES[d["favorite"]])]
+                p["suggestions"] = []
+                p.pop("discovery", None)
+                s["catalogue_review"] = deepcopy(REVIEWED)
                 material = True
             elif action == "resolve":
                 throttle(request, "provider", 8)
@@ -439,7 +494,6 @@ def command(cmd: Command, request: Request):
                         p["favorites"].append(candidate)
                 p["suggestions"] = []
                 p.pop("discovery", None)
-                material = True
             elif action == "consent":
                 p = find(s, "participants", cmd.target)
                 if type(d.get("consent")) is not bool:
@@ -449,7 +503,6 @@ def command(cmd: Command, request: Request):
                     p["favorites"] = []
                     p["suggestions"] = []
                 p.pop("discovery", None)
-                material = True
             elif action == "map":
                 e = find(s, "events", cmd.target)
                 candidate = next(
@@ -471,7 +524,6 @@ def command(cmd: Command, request: Request):
             elif action == "discover":
                 throttle(request, "provider", 8)
                 result = qloo.discover(s, find(s, "participants", cmd.target))
-                material = True
             elif action == "agent":
                 throttle(request, "agent", 3)
                 task = d.get("task")
@@ -568,6 +620,34 @@ def command(cmd: Command, request: Request):
                     "Synthetic provider confirmation recorded",
                     f"{o['id']}: {quantity} seats and tickets",
                 )
+            elif action == "simulate_outcomes":
+                p = find(s, "proposals", cmd.target)
+                if not (p.get("confirmed_record") or status(s, p) == "Confirmed"):
+                    raise HTTPException(
+                        409, "Confirm this synthetic plan before simulating outcomes"
+                    )
+                if d.get("acknowledge") is not True:
+                    raise ValueError(
+                        "Acknowledge that this is a simulated post-event clock"
+                    )
+                used_events = {
+                    o["event_id"]
+                    for o in p["snapshot"]["offers"]
+                    if o["id"] in p["assignments"].values()
+                }
+                p["outcome_simulation_at"] = (
+                    max(
+                        date(e["end"])
+                        for e in p["snapshot"]["events"]
+                        if e["id"] in used_events
+                    )
+                    + timedelta(minutes=1)
+                ).isoformat()
+                audit(
+                    s,
+                    "Simulated post-event clock enabled",
+                    "Outcomes only; operational clock and bookings unchanged",
+                )
             elif action == "outcome":
                 p = find(s, "proposals", cmd.target)
                 pid = d["participant_id"]
@@ -579,9 +659,11 @@ def command(cmd: Command, request: Request):
                     )
                 offer = find(p["snapshot"], "offers", p["assignments"][pid])
                 event = find(p["snapshot"], "events", offer["event_id"])
-                if d["attendance"] in ("attended", "did not attend") and now() < date(
-                    event["end"]
-                ):
+                if d["attendance"] in ("attended", "did not attend") and (
+                    date(p["outcome_simulation_at"])
+                    if p.get("outcome_simulation_at")
+                    else now()
+                ) < date(event["end"]):
                     raise HTTPException(
                         409,
                         "Record attendance after the event ends; use unknown or cancelled before then",
@@ -608,6 +690,7 @@ def command(cmd: Command, request: Request):
                         "participant_id": pid,
                         "attendance": d["attendance"],
                         "source": d["source"],
+                        "simulated_at": p.get("outcome_simulation_at"),
                         "mode": "synthetic",
                         "at": stamp(),
                     }
@@ -712,6 +795,8 @@ def export(
             "commitments": p["commitments"],
             "confirmations": p["confirmations"],
             "confirmed_record": p.get("confirmed_record"),
+            "outcome_simulation_at": p.get("outcome_simulation_at"),
+            "outcomes": [x for x in s["outcomes"] if x["proposal_id"] == p["id"]],
             "unserved": p["unserved"],
             "events": list(events.values()),
             "offers": list(offers.values()),

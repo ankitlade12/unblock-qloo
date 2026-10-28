@@ -305,6 +305,14 @@ export function DiscoveryComparison({
                     </p>
                   </div>
                 </div>
+                {results.discovery_contribution && (
+                  <div className="discovery-contribution">
+                    <span className="eyebrow">DISCOVERY CONTRIBUTION</span>
+                    <h3>{results.discovery_contribution.newly_accepted_qloo_choices} new Qloo-backed interested choices</h3>
+                    <p>From {results.discovery_contribution.qloo_choices_reviewed} distinct Qloo-backed choices reviewed in this comparison. {results.discovery_contribution.newly_accepted_event_ids.map((id) => c.baseline_summary?.events[id] || id).join(", ")}</p>
+                    <p className="small-note">{results.discovery_contribution.limitation} Planning results below are measured separately.</p>
+                  </div>
+                )}
                 <div className="comparison-results">
                   <ResultCard
                     title="Before exploration"

@@ -8,6 +8,8 @@ import httpx
 from fastapi import HTTPException
 from .domain import stamp
 from . import store
+from .planner import blockers
+from copy import deepcopy
 
 ORIGINS = {"https://api.qloo.com", "https://hackathon.api.qloo.com"}
 
@@ -142,7 +144,37 @@ def discover(s, p):
                 }
             )
     p["suggestions"] = matches
+    new_options = []
+    for match in matches:
+        event = next(e for e in s["events"] if e["id"] == match["event_id"])
+        interest = p["interests"].get(event["id"], {})
+        if (
+            interest.get("response") == "interested"
+            and interest.get("event_version") == event["version"]
+        ):
+            continue
+        candidate = deepcopy(p)
+        candidate["interests"][event["id"]] = {
+            "response": "interested",
+            "event_version": event["version"],
+        }
+        compatible = any(
+            not blockers(s, candidate, offer)
+            for offer in s["offers"]
+            if offer["event_id"] == event["id"]
+        )
+        new_options.append(
+            {
+                "event_id": event["id"],
+                "title": event["title"],
+                "previous_response": interest.get("response", "unseen"),
+                "individually_compatible": compatible,
+            }
+        )
     result = {
+        "new_options": new_options,
+        "already_interested": len(matches) - len(new_options),
+        "favorite_names": [f["name"] for f in p["favorites"]],
         "suggestions": matches,
         "covered": len(matches),
         "mapped": sum(len(events) for events in mapped.values()),

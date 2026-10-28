@@ -4278,3 +4278,12 @@ main summary:focus-visible {
     gap: 12px;
   }
 }
+
+.reviewed-demo-profile, .discovery-contribution { padding: 1.25rem; margin: 1rem 0; border: 1px solid #cbc7ba; border-radius: 16px; background: #f4f2e9; color: #303b35; }
+.reviewed-demo-profile { display: grid; gap: 1rem; }
+.reviewed-demo-profile h3, .discovery-contribution h3 { margin: .35rem 0 .65rem; }
+.reviewed-demo-profile p, .discovery-contribution p { line-height: 1.6; }
+.reviewed-demo-profile select { display: block; width: 100%; margin-top: .5rem; }
+.discovery-contribution li { margin: .7rem 0; line-height: 1.6; }
+
+.reviewed-demo-profile .eyebrow, .discovery-contribution .eyebrow { color: #44554a; }

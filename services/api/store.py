@@ -165,3 +165,27 @@ def rate_limit(identity, bucket, maximum):
         db.execute(
             "INSERT INTO rate_limits VALUES (?,?,?)", (key(identity), bucket, at)
         )
+
+
+def provider_budget(provider):
+    cap = int(
+        os.getenv(
+            f"{provider}_DAILY_CALL_BUDGET", "200" if provider == "QLOO" else "100"
+        )
+    )
+    day = now().date().isoformat()
+    with closing(connect()) as db:
+        row = db.execute(
+            "SELECT used FROM budgets WHERE bucket=?", (f"{day}:{provider}",)
+        ).fetchone()
+    used = row[0] if row else 0
+    return {
+        "limit": cap,
+        "used": used,
+        "remaining": max(0, cap - used),
+        "utc_day": day,
+        "reset_at": (
+            now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+        ).isoformat(),
+        "scope": "Application attempt allowance; upstream provider allowance may differ",
+    }

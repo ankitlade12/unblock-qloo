@@ -203,7 +203,27 @@ def evaluate(s, c):
     )
     if not complete:
         verdict = "Search did not finish exhaustively. Results are checked candidates, not established optima."
+    latest = {(r["participant_id"], r["event_id"]): r for r in c["decisions"]}
+    baseline_people = {p["id"]: p for p in c["snapshot"]["participants"]}
+    qloo_choices = [r for r in latest.values() if r["source"] == "qloo"]
+    new_qloo_choices = [
+        r
+        for r in qloo_choices
+        if r["response"] == "interested"
+        and baseline_people[r["participant_id"]]["interests"]
+        .get(r["event_id"], {})
+        .get("response")
+        != "interested"
+    ]
     c["result"] = {
+        "discovery_contribution": {
+            "qloo_choices_reviewed": len(qloo_choices),
+            "newly_accepted_qloo_choices": len(new_qloo_choices),
+            "newly_accepted_event_ids": sorted(
+                {r["event_id"] for r in new_qloo_choices}
+            ),
+            "limitation": "Explicit synthetic decisions, not observed human acceptance or causal uplift; repeated decisions count once using the latest response.",
+        },
         "before": before,
         "after": after,
         "coverage_delta": delta,

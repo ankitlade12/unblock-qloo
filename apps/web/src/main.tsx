@@ -800,6 +800,8 @@ function App() {
                   }
                 }}
                 discover={() => run("discover", person.id)}
+                loadProfile={(favorite) => run("demo_profile", person.id, { favorite, consent: true })}
+                compare={() => go("Compare discovery")}
               />
               <details ref={personalization} className="personalize-disclosure">
                 <summary>
@@ -1555,6 +1557,11 @@ function App() {
                             after the event ends, even when the historical plan
                             is no longer actionable.
                           </p>
+                          {p.outcome_simulation_at ? (
+                            <div className="info-strip" role="status">Simulated post-event review: {when(p.outcome_simulation_at)}. Recorded outcomes are fictional; actual time, planning validity, and bookings are unchanged.</div>
+                          ) : (
+                            <button className="secondary" disabled={busy} onClick={() => run("simulate_outcomes", p.id, { acknowledge: true })}>Simulate post-event review · fictional outcomes only</button>
+                          )}
                           {Object.keys(p.assignments).map((id) => (
                             <div className="outcome-row" key={id}>
                               <strong>{personName(id)}</strong>
@@ -1596,7 +1603,7 @@ function App() {
                                               (o) => o.id === p.assignments[id],
                                             )?.event_id,
                                         )?.end || "",
-                                      ).getTime() > Date.now()
+                                      ).getTime() > (p.outcome_simulation_at ? new Date(p.outcome_simulation_at).getTime() : Date.now())
                                     }
                                   >
                                     {v}

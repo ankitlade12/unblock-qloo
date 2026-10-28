@@ -34,6 +34,10 @@ test("organizer and participant journey, confirmation, disruption and isolation"
   await expect(
     page.getByRole("button", { name: "Run Qloo discovery", exact: true }),
   ).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Load reviewed demo profile", exact: true })).toBeDisabled();
+  await page.getByRole("checkbox", { name: /Use this fictional profile for Alex/ }).check();
+  await page.getByRole("button", { name: "Load reviewed demo profile", exact: true }).click();
+  await expect(page.getByText("8 of 8 screenings mapped. Each selection is reviewed.")).toBeVisible();
   await page
     .locator("summary")
     .filter({ hasText: "Personalize with Qloo" })
@@ -102,6 +106,13 @@ test("organizer and participant journey, confirmation, disruption and isolation"
   const download = page.waitForEvent("download");
   await page.getByRole("link", { name: "Final calendar itinerary" }).click();
   expect((await download).suggestedFilename()).toMatch(/\.ics$/);
+  await page.getByRole("button", { name: "Simulate post-event review · fictional outcomes only", exact: true }).click();
+  await expect(page.getByText(/Simulated post-event review:/)).toBeVisible();
+  await page.getByRole("combobox", { name: "Alex attendance", exact: true }).selectOption("attended");
+  await expect.poll(async () => {
+    const state = await (await page.request.get("/api/state")).json();
+    return state.outcomes.some((outcome: {participant_id: string; attendance: string; simulated_at?: string}) => outcome.participant_id === "p1" && outcome.attendance === "attended" && !!outcome.simulated_at);
+  }).toBe(true);
   await page.getByRole("button", { name: "Resources", exact: true }).click();
   await page
     .getByRole("button", { name: "Mark unavailable", exact: true })

@@ -1,0 +1,79 @@
+[
+  {
+    "name": "Inside Out",
+    "year": 2015,
+    "entity_id": "3F119D9B-D7F2-4643-8C53-81997961A6DC",
+    "reviewed_at": "2026-10-28T00:37:24.942396+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "Soul",
+    "year": 2020,
+    "entity_id": "01D3D6B7-76AE-482A-8949-A2CA64097E8D",
+    "reviewed_at": "2026-10-28T00:36:21.031247+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "Coco",
+    "year": 2017,
+    "entity_id": "649672AD-38A4-42C7-BAAC-BBD2D5BEEFA0",
+    "reviewed_at": "2026-10-28T00:36:23.230494+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "Spirited Away",
+    "year": 2001,
+    "entity_id": "9B33A620-68CA-49B3-BFCF-F09CCF8AD595",
+    "reviewed_at": "2026-10-28T00:36:21.646197+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "The Grand Budapest Hotel",
+    "year": 2014,
+    "entity_id": "DF788007-B5EA-4F29-872B-96BCB8EEC42F",
+    "reviewed_at": "2026-10-28T00:36:21.338451+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "Hidden Figures",
+    "year": 2016,
+    "entity_id": "2FE30D6E-40E7-4D7B-91FE-66673E932EE9",
+    "reviewed_at": "2026-10-28T00:36:21.989319+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "Am\u00e9lie",
+    "year": 2001,
+    "entity_id": "B7A0731F-EC92-496A-9C40-47D9770489B6",
+    "reviewed_at": "2026-10-28T00:36:22.327717+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "The Secret Life of Walter Mitty",
+    "year": 2013,
+    "entity_id": "CC237B4E-3CA1-462A-A2C2-09BF32FAAC42",
+    "reviewed_at": "2026-10-28T00:36:22.880395+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "Fantastic Mr. Fox",
+    "year": 2009,
+    "entity_id": "053A809A-DA41-42F2-AAD8-FF8B8CB6CEFD",
+    "reviewed_at": "2026-10-28T00:37:22.008843+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "Moonrise Kingdom",
+    "year": 2012,
+    "entity_id": "79A98408-6B84-4416-99B4-A4B3563BEAFB",
+    "reviewed_at": "2026-10-28T00:37:30.199371+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  },
+  {
+    "name": "My Neighbor Totoro",
+    "year": 1988,
+    "entity_id": "E146CA3A-10FD-4C7F-ACFA-AD4E9955F08E",
+    "reviewed_at": "2026-10-28T00:37:35.721369+00:00",
+    "source": "Qloo search; exact title and release year reviewed"
+  }
+]

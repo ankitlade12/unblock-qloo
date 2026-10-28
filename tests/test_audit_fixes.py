@@ -94,7 +94,7 @@ def test_title_change_clears_mapping_and_suggestions(client):
 def test_provider_matches_all_screenings(monkeypatch):
     s = seed()
     p = s["participants"][0]
-    p.update(consent=True, favorites=[{"entity_id": "favorite"}])
+    p.update(consent=True, favorites=[{"entity_id": "favorite", "name": "Example favorite"}])
     for e in s["events"][:2]:
         e["entity_id"] = "film"
     ev = {

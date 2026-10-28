@@ -65,6 +65,17 @@ Implemented a six-chapter interactive case study on the existing workspace, with
 | 9 | Duplicate screenings collapsed | Fixed: one Qloo entity maps to every non-cancelled reviewed screening |
 | 10 | No fresh-visitor live setup | Fixed: visible mapping → consent/favorites → discovery flow, prerequisite checks and explicit empty states |
 | 11 | Optional model unverified | Core is labeled as deterministic tools/workflow; model is optional and mock-tested only. Live model remains unverified |
-| 12 | Stale docs and missing regressions | Updated docs, 38 backend tests, configurable browser origin/readiness, offline CI, repeatable opt-in live evaluation |
+| 12 | Stale docs and missing regressions | Updated docs, 48 backend tests, configurable browser origin/readiness, offline CI, repeatable opt-in live evaluation |
 
 Existing workspaces preserve their saved fixtures. Start a new demo for the expanded eight-offer catalogue. No real operational availability, causal recommendation uplift, private pilot readiness, or live optional-model capability is claimed.
+
+## Second audit — eight findings
+
+1. Qloo contribution: reviewed-profile discovery now shows novel options, individual compatibility, and distinct explicit acceptance separately from planning metrics. Three live profiles returned 2/1/0 new options; no coverage/cost improvement or real-human benefit is claimed.
+2. Approval invalidation: operational fingerprints exclude cultural metadata; discovery/favorites/consent preserve approvals, while genuine planning inputs still invalidate them.
+3. Request sizes: count actual streamed bytes before parsing, including chunked requests.
+4. Imports: validate the bounded import structure and return 422 without mutation for malformed records.
+5. Submission: complete description and judge instructions prepared; team details/declarations belong to the user, and final Devpost submission remains pending account access/confirmation.
+6. Onboarding: reviewed catalogue plus explicitly consented fictional profile requires no identity search calls.
+7. Quotas: one live call per reviewed profile, visible remaining allowance, persistent caps, and hourly judging health checks. Upstream availability remains external.
+8. Outcomes: explicit, labeled per-proposal post-event simulation enables the fictional end-to-end story without changing operational clocks or extending retention.
